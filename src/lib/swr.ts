@@ -1,5 +1,6 @@
 // SWR configuration and utilities
 import useSWR, { SWRConfiguration } from 'swr';
+import { URL_DOMAIN } from './globalConstants';
 
 // Custom error class for better error handling
 export class ApiError extends Error {
@@ -14,10 +15,44 @@ export class ApiError extends Error {
     }
 }
 
+/**
+ * Converts a backend URL to use the Next.js API proxy route
+ * This bypasses CORS issues by routing through the server
+ */
+function getProxyUrl(url: string): string {
+    // If it's already a relative URL (starts with /api/strapi), use it as-is
+    if (url.startsWith('/api/strapi/')) {
+        return url;
+    }
+
+    // If it's a backend URL, convert it to use the proxy
+    if (url.startsWith(URL_DOMAIN)) {
+        // Extract the path after /api/
+        const apiPath = url.replace(URL_DOMAIN, '').replace(/^\/api\//, '');
+        return `/api/strapi/${apiPath}`;
+    }
+
+    // If it's already a relative URL starting with /api/, check if it needs proxy
+    if (url.startsWith('/api/') && !url.startsWith('/api/strapi/')) {
+        // Check if this is a backend endpoint that should go through proxy
+        // For now, we'll proxy all /api/ calls that aren't already proxy routes
+        const apiPath = url.replace('/api/', '');
+        return `/api/strapi/${apiPath}`;
+    }
+
+    // For other URLs (like relative paths that aren't backend calls), return as-is
+    return url;
+}
+
 // Fetcher function for SWR with better error handling
+// Automatically uses proxy route for backend URLs to avoid CORS issues
 export const fetcher = async (url: string) => {
     try {
-        const res = await fetch(url);
+        // Convert backend URLs to proxy URLs when running on client-side
+        const isClient = typeof window !== 'undefined';
+        const fetchUrl = isClient ? getProxyUrl(url) : url;
+
+        const res = await fetch(fetchUrl);
         
         // Handle 404s gracefully - return null instead of throwing (silently)
         if (res.status === 404) {
@@ -29,7 +64,7 @@ export const fetcher = async (url: string) => {
             const error = new ApiError(res.status, res.statusText, `HTTP error! status: ${res.status}`);
             // Only log non-404 errors
             if (res.status !== 404) {
-                console.error(`API Error (${res.status}): ${url}`, error);
+                console.error(`API Error (${res.status}): ${fetchUrl}`, error);
             }
             throw error;
         }

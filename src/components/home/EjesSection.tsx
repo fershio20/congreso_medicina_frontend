@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import EjesCards from "@/components/cards/ejesCards";
 import { URL_DOMAIN} from "@/lib/globalConstants";
+import { getProxyUrl } from "@/lib/utils";
 
 interface EjeTematico {
     id: number;
@@ -90,7 +91,10 @@ const EjesSection: React.FC = () => {
 
 
     useEffect(() => {
-        fetch(`${URL_DOMAIN}/api/home-page?populate[EjesTematicosSection][populate][EjesTematicos][populate]=*`)
+        const url = `${URL_DOMAIN}/api/home-page?populate[EjesTematicosSection][populate][EjesTematicos][populate]=*`;
+        const proxyUrl = getProxyUrl(url);
+        
+        fetch(proxyUrl)
             .then(res => res.json())
             .then(json => {
                 const result = json.data;

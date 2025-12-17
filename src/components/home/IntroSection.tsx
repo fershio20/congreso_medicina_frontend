@@ -1,6 +1,7 @@
 'use client'
 import { useEffect, useState } from "react";
 import { URL_DOMAIN } from "@/lib/globalConstants";
+import { getProxyUrl } from "@/lib/utils";
 
 interface HomeGeneralInterface {
     titulo: string
@@ -13,7 +14,10 @@ export default function IntroSection() {
     const [HomeGeneral, setHomeGeneral] = useState<HomeGeneralInterface | null>(null)
 
     useEffect(() => {
-        fetch(`${URL_DOMAIN}/api/home-page?populate[IntroSectionHome][populate]=*`)
+        const url = `${URL_DOMAIN}/api/home-page?populate[IntroSectionHome][populate]=*`;
+        const proxyUrl = getProxyUrl(url);
+        
+        fetch(proxyUrl)
             .then(res => res.json())
             .then(data => {
                 const section = data.data?.IntroSectionHome
