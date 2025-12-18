@@ -18,6 +18,7 @@ export interface GlobalSEO {
 }
 
 export interface HomeSectionData {
+    habilitado: boolean;
     titulo: string;
     descripcion: string;
     destacado: {
@@ -26,6 +27,7 @@ export interface HomeSectionData {
     imgBackground?: string;
     proximaEdicionTitle: string;
     fecha: string;
+    subtitulo?: string;
 }
 
 export interface HomePageProps {
@@ -35,26 +37,23 @@ export interface HomePageProps {
     configuracion: ConfiguracionData | null;
 }
 
+export interface StrapiHomeSection {
+    habilitado: boolean;
+    sub_titulo?: string;
+    titulo?: string;
+    descripcion?: string;
+    destacado?: { url?: string };
+    ProximaEdicion?: string;
+    FechaEvento?: string;
+    imageBackground?: { url?: string };
+}
+
 export interface StrapiHeroResponse {
     data?: {
         attributes?: {
-            HomeSection?: {
-                titulo?: string;
-                descripcion?: string;
-                destacado?: { url?: string };
-                ProximaEdicion?: string;
-                FechaEvento?: string;
-                imageBackground?: { url?: string };
-            };
+            HomeSection?: StrapiHomeSection;
         };
-        HomeSection?: {
-            titulo?: string;
-            descripcion?: string;
-            destacado?: { url?: string };
-            ProximaEdicion?: string;
-            FechaEvento?: string;
-            imageBackground?: { url?: string };
-        };
+        HomeSection?: StrapiHomeSection;
     };
 }
 
@@ -88,6 +87,19 @@ export interface ConfiguracionData {
     color_secondary?: string;
     color_text?: string;
     color_accent?: string;
+    main_navigation:{
+        dark_mode: boolean;
+        customClass?: string;
+        variant: 'default' | 'colored' | 'sticky';
+        items?: Array<{
+            label: string;
+            link: string;
+            sub_items?: Array<{
+                label: string;
+                link: string;
+            }>;
+        }>;
+    }
 }
 
 export interface StrapiConfiguracionResponse {

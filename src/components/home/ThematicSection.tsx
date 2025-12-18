@@ -9,6 +9,7 @@ import type { ConfiguracionData } from "@/types/home";
 interface EjeTematico {
     id: number;
     Titulo: string;
+    descripcion: string;
     Descripcion?: string | null;
     ImagenDestacada?: {
         url: string;
@@ -50,14 +51,14 @@ const ThematicSection: React.FC<ThematicSectionProps> = ({ configuracion }) => {
     }, []);
 
     if (!data?.EjesTematicosHabilitados) return null;
-
+    console.log('EJES',data)
     return (
         <section id="ejes" className="bg-white">
-            <div className="container max-w-[1280px] mx-auto px-4 text-center pt-10 pb-52">
+            <div className="container max-w-[1280px] mx-auto px-4  pt-10 pb-52">
                 <h2 
-                    className="text-4xl md:text-5xl font-heading font-bold mb-12"
+                    className="text-4xl text-center md:text-5xl font-heading font-bold mb-12"
                     style={{
-                        color: configuracion?.color_secondary || configuracion?.color_main || 'var(--secondary-color)'
+                        color: configuracion?.color_main || configuracion?.color_main || '#333'
                     }}
                 >
                     {data.EjesTematicosTitulo || 'Ejes temáticos'}
@@ -75,10 +76,12 @@ const ThematicSection: React.FC<ThematicSectionProps> = ({ configuracion }) => {
                         </h3>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center">
                             {section.EjesTematicos.map((item) => (
-                                <div key={item.id} className="w-full max-w-[350px]">
+                                <div key={item.id} className="w-full">
+
                                     <ThematicCard
                                         title={item.Titulo}
-                                        description={["", "", "", "", "", "",]}
+                                        description={item.descripcion ? item.descripcion : ''}
+                                        main_color={configuracion?.color_main || ''}
                                         iconImg={item.ImagenDestacada?.url ? URL_DOMAIN + item.ImagenDestacada.url : ""}
                                     />
                                 </div>

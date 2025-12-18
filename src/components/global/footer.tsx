@@ -57,7 +57,7 @@ const Footer: React.FC<FooterProps> = ({ configuracion }) => {
 
     return (
         <footer 
-            className="py-12"
+            className="py-0 pb-12"
             style={{
                 backgroundColor: configuracion?.color_main || '#045084'
             }}
@@ -78,7 +78,7 @@ const Footer: React.FC<FooterProps> = ({ configuracion }) => {
                 </div>
 
                 {/* Links */}
-                <nav className="flex flex-col md:flex-row justify-center gap-8 mb-8">
+                {/*<nav className="flex flex-col md:flex-row justify-center gap-8 mb-8">
                     <button 
                         onClick={() => handleSectionClick('inicio')}
                         className="text-white font-semibold text-sm hover:text-gray-300 transition-colors duration-200 cursor-pointer"
@@ -121,7 +121,7 @@ const Footer: React.FC<FooterProps> = ({ configuracion }) => {
                     >
                         Programa
                     </Link>
-                </nav>
+                </nav>*/}
 
                 {/* Separador */}
                 <div className="border-t border-white/20 pt-6 flex flex-col md:flex-row justify-between items-center">

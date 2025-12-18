@@ -11,6 +11,7 @@ interface HomeSectionData {
     imgBackground?: string
     proximaEdicionTitle: string
     fecha: string
+    subtitulo?: string
 }
 
 interface SeccionHeroProps {
@@ -61,11 +62,12 @@ export default function SeccionHero({ heroData, configuracion }: SeccionHeroProp
 
 
 
+    console.log('HERODATA', heroData);
     return (
         <>
         <section
             id="inicio"
-            className={`${heroData.imgBackground ? '' : 'bg-main-familiar'} h-dvh flex items-center relative`}
+            className={`${heroData.imgBackground ? '' : 'bg-main-familiar'} min-h-dvh flex items-center relative`}
             style={{
                 backgroundImage: heroData.imgBackground ? `url(${heroData.imgBackground})` : '',
                 backgroundSize: heroData.imgBackground && `cover`,
@@ -81,7 +83,7 @@ export default function SeccionHero({ heroData, configuracion }: SeccionHeroProp
 
             </div>
             <div
-                className="container max-w-[1280px] mx-auto flex flex-col md:flex-row items-center px-4  h-auto relative z-30">
+                className="container max-w-[1280px] mt-10 mx-auto flex flex-col md:flex-row items-center px-4  h-auto relative z-30">
                 {/* Left Side */}
                 <div className="grid grid-cols-12 w-full gap-4">
                     <div className={'col-span-12'}>
@@ -95,8 +97,8 @@ export default function SeccionHero({ heroData, configuracion }: SeccionHeroProp
                             </>
                         )}
                     </div>
-                    <div className={'text-center flex flex-col justify-center col-span-12'}>
-                        <h2 className={''}>
+                    <div className={' flex flex-col justify-center col-span-12'}>
+                        <h2 className={'text-center'}>
                             <span
                                     style={{
                                         color:configuracion?.color_main || 'inherit',
@@ -105,7 +107,9 @@ export default function SeccionHero({ heroData, configuracion }: SeccionHeroProp
                                 {heroData.titulo}
                             </span>
                         </h2>
-
+                        {heroData.subtitulo && (
+                        <div dangerouslySetInnerHTML={{ __html: heroData.subtitulo }}></div>
+                        )}
                         <p 
                             className="mb-10 text-2xl font-medium"
                             style={{
@@ -114,7 +118,7 @@ export default function SeccionHero({ heroData, configuracion }: SeccionHeroProp
                         >
                             {heroData.descripcion}
                         </p>
-                        <div className={''}>
+                        <div className={'text-center'}>
                             <a href="#conocer-mas"
                                style={{
                                    background: configuracion?.color_main || 'inherit'

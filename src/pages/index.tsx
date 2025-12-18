@@ -52,6 +52,7 @@ export default function Home({heroData, globalSEO, logoUrl, configuracion}: Home
 
 
     console.log("Configuracion en Home:", configuracion);
+    console.log("HeroData en Home:", heroData);
     return (
         <>
             <SEO

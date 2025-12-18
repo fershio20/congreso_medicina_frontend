@@ -210,10 +210,13 @@ const MainNav: React.FC<MainNavProps> = ({ configuracion }) => {
 
     return (
         <header 
-            className="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
+            className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 shadow-lg
+                ${configuracion?.main_navigation?.customClass ? configuracion?.main_navigation?.customClass : '' }
+                ${configuracion?.main_navigation?.dark_mode ? configuracion?.main_navigation?.dark_mode : ''}
+            `}
             style={{
                 height: isScrolled ? '70px' : '100px',
-                backgroundColor: configuracion?.color_main ? configuracion.color_main : '#045084'
+                backgroundColor: configuracion?.main_navigation?.dark_mode ? (configuracion?.color_main ? configuracion.color_main : '#045084') : '#FFFF',
             }}
         >
             <nav className="h-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -221,7 +224,7 @@ const MainNav: React.FC<MainNavProps> = ({ configuracion }) => {
                     {/* Logo with white circular background */}
                     <div className="flex-shrink-0">
                         <Link href="/" className="flex items-center">
-                            <div className="bg-white rounded-full shadow-lg transition-all duration-300">
+                            <div className="bg-white rounded-full  transition-all duration-300">
                                 {(configuracion?.logo?.url || HomeGeneral?.logoCongreso) ? (
                                     <img
                                         src={
@@ -234,8 +237,9 @@ const MainNav: React.FC<MainNavProps> = ({ configuracion }) => {
                                         alt="Logo Congreso"
                                         className="transition-all duration-300"
                                         style={{
-                                            height: isScrolled ? '40px' : '60px',
-                                            width: isScrolled ? '40px' : '60px'
+                                            height: isScrolled ? '40px' : 'auto',
+                                            width: isScrolled ? '40px' : '60px',
+                                            maxWidth: isScrolled ? 'auto' : '60px',
                                         }}
                                     />
                                 ) : (
@@ -260,10 +264,15 @@ const MainNav: React.FC<MainNavProps> = ({ configuracion }) => {
                                 <div key={section.id} className="relative h-full flex items-stretch">
                                     <button
                                         ref={(el) => { menuRefs.current[section.id] = el; }}
-                                        className={`h-full px-6 text-sm font-medium hover:cursor-pointer text-white transition-all duration-300 hover:text-white flex items-center justify-center`}
+                                        className={`h-full px-6 text-sm font-medium hover:cursor-pointer
+                                        
+                                        transition-all duration-300 hover:text-white flex items-center justify-center`}
                                         onMouseEnter={() => setHoveredSection(section.id)}
                                         onMouseLeave={() => setHoveredSection(null)}
                                         onClick={() => handleSectionClick(section.id)}
+                                        style={{
+                                            color: configuracion?.main_navigation?.dark_mode ? '#FFF' : (configuracion?.color_main ? configuracion?.color_main : '#333'),
+                                        }}
                                     >
                                         {section.label}
                                     </button>
@@ -271,12 +280,15 @@ const MainNav: React.FC<MainNavProps> = ({ configuracion }) => {
                             ))}
                             
                             {/* Congreso Dropdown */}
-                            <div className="relative h-full flex items-stretch">
+                            {/*<div className="relative h-full flex items-stretch">
                                 <button
                                     ref={(el) => { menuRefs.current['congreso'] = el; }}
-                                    className={`h-full px-6 text-sm font-medium text-white transition-all duration-300 hover:text-white flex items-center justify-center gap-2`}
+                                    className={`h-full px-6 text-sm font-medium  transition-all duration-300  flex items-center justify-center gap-2`}
                                     onMouseEnter={() => setIsCongresoOpen(true)}
                                     onMouseLeave={() => setIsCongresoOpen(false)}
+                                    style={{
+                                        color: configuracion?.main_navigation?.dark_mode ? '#FFF' : (configuracion?.color_main ? configuracion?.color_main : '#333'),
+                                    }}
                                 >
                                     Congreso
                                     <svg className="w-4 h-4 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -309,15 +321,18 @@ const MainNav: React.FC<MainNavProps> = ({ configuracion }) => {
                                         </motion.div>
                                     )}
                                 </AnimatePresence>
-                            </div>
+                            </div>*/}
 
                             {/* Autoridades Dropdown */}
-                            <div className="relative h-full flex items-stretch">
+                            {/*<div className="relative h-full flex items-stretch">
                                 <button
                                     ref={(el) => { menuRefs.current['autoridades'] = el; }}
                                     className={`h-full px-6 text-sm font-medium text-white transition-all duration-300 hover:text-white flex items-center justify-center gap-2`}
                                     onMouseEnter={() => setIsAutoridadesOpen(true)}
                                     onMouseLeave={() => setIsAutoridadesOpen(false)}
+                                    style={{
+                                        color: configuracion?.main_navigation?.dark_mode ? '#FFF' : (configuracion?.color_main ? configuracion?.color_main : '#333'),
+                                    }}
                                 >
                                     Autoridades
                                     <svg className="w-4 h-4 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -350,7 +365,7 @@ const MainNav: React.FC<MainNavProps> = ({ configuracion }) => {
                                         </motion.div>
                                     )}
                                 </AnimatePresence>
-                            </div>
+                            </div>*/}
 
                             {/* Temas libres - Using Button component with principal variant */}
                             <div className="ml-6 flex items-center">
