@@ -66,13 +66,13 @@ export default function Home({heroData, globalSEO, logoUrl, configuracion}: Home
             <div className="bg-white text-gray-800 space-y-12">
                 <MainNav configuracion={configuracion}/>
                 <SeccionHero heroData={heroData} configuracion={configuracion}/>
-                <IntroSection/>
+                <IntroSection configuracion={configuracion}/>
                 <ExpertSection/>
                 <PreCongreso/>
                 <CostSection/>
 
                 {/*<EjesSection />*/}
-                 <ThematicSection />
+                 <ThematicSection configuracion={configuracion} />
 
                 {/* Programa del Congreso Section - Dynamic from API*/}
                 <ProgramaSection/>

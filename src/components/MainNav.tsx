@@ -260,7 +260,7 @@ const MainNav: React.FC<MainNavProps> = ({ configuracion }) => {
                                 <div key={section.id} className="relative h-full flex items-stretch">
                                     <button
                                         ref={(el) => { menuRefs.current[section.id] = el; }}
-                                        className={`h-full px-6 text-sm font-medium text-white transition-all duration-300 hover:text-white flex items-center justify-center`}
+                                        className={`h-full px-6 text-sm font-medium hover:cursor-pointer text-white transition-all duration-300 hover:text-white flex items-center justify-center`}
                                         onMouseEnter={() => setHoveredSection(section.id)}
                                         onMouseLeave={() => setHoveredSection(null)}
                                         onClick={() => handleSectionClick(section.id)}
@@ -382,7 +382,10 @@ const MainNav: React.FC<MainNavProps> = ({ configuracion }) => {
 
                         {/* Moving bottom border */}
                         <motion.div
-                            className="absolute bottom-0 h-1 bg-teal-300 rounded-full"
+                            className="absolute bottom-0 h-1 rounded-full"
+                            style={{
+                                backgroundColor: configuracion?.color_accent || '#5eead4'
+                            }}
                             initial={false}
                             animate={{
                                 x: borderStyle.x,

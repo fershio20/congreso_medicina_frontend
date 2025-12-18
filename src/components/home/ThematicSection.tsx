@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import ThematicCard from "@/components/ThematicCard";
 import { URL_DOMAIN } from "@/lib/globalConstants";
 import { getProxyUrl } from "@/lib/utils";
+import type { ConfiguracionData } from "@/types/home";
 
 interface EjeTematico {
     id: number;
@@ -26,7 +27,11 @@ interface ThematicData {
     EjesTematicosSection?: EjesSection[];
 }
 
-const ThematicSection: React.FC = () => {
+interface ThematicSectionProps {
+    configuracion?: ConfiguracionData | null;
+}
+
+const ThematicSection: React.FC<ThematicSectionProps> = ({ configuracion }) => {
     const [data, setData] = useState<ThematicData | null>(null);
 
     useEffect(() => {
@@ -49,11 +54,25 @@ const ThematicSection: React.FC = () => {
     return (
         <section id="ejes" className="bg-white">
             <div className="container max-w-[1280px] mx-auto px-4 text-center pt-10 pb-52">
-                <h2 className="text-[var(--secondary-color)] text-4xl md:text-5xl font-heading font-bold mb-12">{data.EjesTematicosTitulo || 'Ejes temáticos'}</h2>
+                <h2 
+                    className="text-4xl md:text-5xl font-heading font-bold mb-12"
+                    style={{
+                        color: configuracion?.color_secondary || configuracion?.color_main || 'var(--secondary-color)'
+                    }}
+                >
+                    {data.EjesTematicosTitulo || 'Ejes temáticos'}
+                </h2>
 
                 {data.EjesTematicosSection && data.EjesTematicosSection.map((section, index) => (
                     <div key={index} className="mb-20">
-                        <h3 className="text-2xl font-semibold mb-8">{section.SubTitulo}</h3>
+                        <h3 
+                            className="text-2xl font-semibold mb-8"
+                            style={{
+                                color: configuracion?.color_main || 'inherit'
+                            }}
+                        >
+                            {section.SubTitulo}
+                        </h3>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center">
                             {section.EjesTematicos.map((item) => (
                                 <div key={item.id} className="w-full max-w-[350px]">

@@ -134,8 +134,8 @@ const PreTalleresSection: React.FC = () => {
         );
     }
 
-    console.log('Talleres data:', talleres);
-
+    // console.log('Talleres data:', talleres);
+    if (talleres.length === 0) return null
     return (
         <div 
             id="pre-congreso"

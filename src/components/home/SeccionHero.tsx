@@ -83,11 +83,25 @@ export default function SeccionHero({ heroData, configuracion }: SeccionHeroProp
             <div
                 className="container max-w-[1280px] mx-auto flex flex-col md:flex-row items-center px-4  h-auto relative z-30">
                 {/* Left Side */}
-                <div className="grid grid-cols-2 w-full gap-4">
-                    <div className={'text-left flex flex-col justify-center'}>
+                <div className="grid grid-cols-12 w-full gap-4">
+                    <div className={'col-span-12'}>
+                        {heroData.destacado.url && (
+                            <>
+                                <img
+                                    src={`${URL_DOMAIN}${heroData.destacado.url}`}
+                                    alt="Hero Illustration 1"
+                                    className="w-full max-w-1/2 mx-auto"
+                                />
+                            </>
+                        )}
+                    </div>
+                    <div className={'text-center flex flex-col justify-center col-span-12'}>
                         <h2 className={''}>
-                            Bienvenidos al <br/>
-                            <span className="text-4xl sm:text-5xl md:text-6xl font-heading font-bold text-[var(--secondary-color)]">
+                            <span
+                                    style={{
+                                        color:configuracion?.color_main || 'inherit',
+                                    }}
+                                className={`text-4xl sm:text-3xl md:text-3xl font-bold`}>
                                 {heroData.titulo}
                             </span>
                         </h2>
@@ -110,17 +124,7 @@ export default function SeccionHero({ heroData, configuracion }: SeccionHeroProp
                             </a>
                         </div>
                     </div>
-                    <div className={''}>
-                        {heroData.destacado.url && (
-                            <>
-                                <img
-                                    src={`${URL_DOMAIN}${heroData.destacado.url}`}
-                                    alt="Hero Illustration 1"
-                                    className="w-full mx-auto"
-                                />
-                            </>
-                        )}
-                    </div>
+
 
 
                 </div>
@@ -130,13 +134,13 @@ export default function SeccionHero({ heroData, configuracion }: SeccionHeroProp
             {/* Bottom Text */}
             <div className='bg-linear-to-white py-10  sm:py-24 md:py-0 md:pb-12 px-6 md:px-8'>
                 <div className="container max-w-[1280px] mx-auto text-center">
-                    <div className={'mx-auto text-center'}>
+                    {/*<div className={'mx-auto text-center'}>
                         <img
                             src={`/congreso/pediatria-fecha.png`}
                             alt="Hero Illustration"
                             className="mx-auto w-[150px] mb-10 sm:w-[250px]"
                         />
-                    </div>
+                    </div>*/}
                     <Countdown color_from={configuracion?.color_main} color_to={configuracion?.color_accent} targetDate={`${heroData.fecha}T00:00:00`}/>
                 </div>
             </div>

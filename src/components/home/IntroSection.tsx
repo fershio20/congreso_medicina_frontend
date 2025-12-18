@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { URL_DOMAIN } from "@/lib/globalConstants";
 import { getProxyUrl } from "@/lib/utils";
+import type { ConfiguracionData } from "@/types/home";
 
 interface HomeGeneralInterface {
     titulo: string
@@ -9,8 +10,11 @@ interface HomeGeneralInterface {
     logoCongreso?: string
 }
 
+interface IntroSectionProps {
+    configuracion?: ConfiguracionData | null;
+}
 
-export default function IntroSection() {
+export default function IntroSection({ configuracion }: IntroSectionProps) {
     const [HomeGeneral, setHomeGeneral] = useState<HomeGeneralInterface | null>(null)
 
     useEffect(() => {
@@ -37,7 +41,12 @@ export default function IntroSection() {
         <>
             <section id='intro' className="py-[100px] bg-white">
                 <div className="container max-w-[1280px] mx-auto px-4">
-                    <h2 className={'font-title mb-10 text-[var(--secondary-color)] text-center text-4xl md:text-5xl font-heading font-bold'}>
+                    <h2 
+                        className={'font-title mb-10 text-center text-4xl md:text-5xl font-heading font-bold'}
+                        style={{
+                            color: configuracion?.color_main || 'var(--secondary-color)',
+                        }}
+                    >
                         {HomeGeneral?.titulo && HomeGeneral?.titulo}
                     </h2>
                     {HomeGeneral?.logoCongreso && (
@@ -48,7 +57,12 @@ export default function IntroSection() {
                     )}
 
                     <div className={'mt-10'}>
-                        <p className="text-xl font-semibold">
+                        <p 
+                            className="text-xl font-semibold"
+                            style={{
+                                color: configuracion?.color_text || 'inherit',
+                            }}
+                        >
                             {HomeGeneral?.DescripcionBody}
                         </p>
 
