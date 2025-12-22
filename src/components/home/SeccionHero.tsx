@@ -62,7 +62,7 @@ export default function SeccionHero({ heroData, configuracion }: SeccionHeroProp
 
 
 
-    console.log('HERODATA', heroData);
+    // console.log('HERODATA', heroData);
     return (
         <>
         <section

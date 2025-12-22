@@ -52,7 +52,7 @@ const ExpertSection: React.FC = () => {
     const loading = !sectionData && !sectionError && !expertsData && !expertsError;
     const error = sectionError || expertsError;
 
-    console.log('ExpertSection data:', data);
+    // console.log('ExpertSection data:', data);
 
 
     // Loading state

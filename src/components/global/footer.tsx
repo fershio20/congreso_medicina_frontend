@@ -55,6 +55,7 @@ const Footer: React.FC<FooterProps> = ({ configuracion }) => {
         }
     };
 
+    console.log('Footer configuracion:', configuracion)
     return (
         <footer 
             className="py-0 pb-12"
@@ -127,21 +128,29 @@ const Footer: React.FC<FooterProps> = ({ configuracion }) => {
                 <div className="border-t border-white/20 pt-6 flex flex-col md:flex-row justify-between items-center">
                     {/* Copyright */}
                     <p className="text-xs text-white/80 mb-4 md:mb-0">
-                        Copyright © 2025 Sociedad Paraguaya de Pediatría.
-                        All rights reserved. Desarrollado por <a className='underline hover:text-white transition-colors duration-200' href="https://www.rocketpy.com/" target='_blank' rel="noopener noreferrer">Rocket Studio</a>
+                        {configuracion?.footer?.copy_text || ''}&nbsp;
+                        Desarrollado por <a className='underline hover:text-white transition-colors duration-200' href="https://www.rocketpy.com/" target='_blank' rel="noopener noreferrer">Rocket Studio</a>
                     </p>
 
                     {/* Redes sociales */}
                     <div className="flex justify-center gap-4 text-white text-xl">
+                        {configuracion?.footer?.social_facebook &&(
                         <a href="https://www.facebook.com/CongresodePediatria" aria-label="Facebook" className="hover:text-gray-300 transition-colors duration-200">
                             <FaFacebookF />
                         </a>
+                        )}
+
+                        {configuracion?.footer?.social_twitter &&(
                         <a href="https://x.com/sppcongreso" aria-label="Twitter" className="hover:text-gray-300 transition-colors duration-200">
                             <FaTwitter />
                         </a>
+                        )}
+
+                        {configuracion?.footer?.social_instagram &&(
                         <a href="https://www.instagram.com/sppcongreso/" aria-label="Instagram" className="hover:text-gray-300 transition-colors duration-200">
                             <FaInstagram />
                         </a>
+                        )}
                     </div>
                 </div>
             </div>

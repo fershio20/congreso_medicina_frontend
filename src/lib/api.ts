@@ -116,14 +116,14 @@ export async function fetchLogoUrl(): Promise<string | null> {
  */
 export async function fetchConfiguracion(): Promise<ConfiguracionData | null> {
     const json = await fetchServerSide<StrapiConfiguracionResponse>(
-        "/api/configuracion?populate[logo][populate]=*&populate[main_navigation][populate]=*"
+        "/api/configuracion?populate[logo][populate]=*&populate[main_navigation][populate]=*&populate[footer][populate]=*"
     );
     
     if (!json || !json.data) return null;
     
     // Handle both response formats (with attributes or direct)
     const data = json.data.attributes || json.data;
-    
+    // console.log(' FETCH LOG', data);
     if (!data) return null;
     
     return {
@@ -137,6 +137,14 @@ export async function fetchConfiguracion(): Promise<ConfiguracionData | null> {
         main_navigation:{
             variant: 'default',
             dark_mode: false,
+        },
+        footer:{
+            copy_text: data.footer?.copy_text ||'',
+            social_facebook: data.footer?.social_facebook ||'',
+            social_instagram: data.footer?.social_instagram ||'',
+            social_twitter: data.footer?.social_twitter ||'',
+            social_mail: data.footer?.social_mail ||'',
+
         }
     };
 }

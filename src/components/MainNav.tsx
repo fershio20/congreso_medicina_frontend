@@ -110,7 +110,7 @@ const MainNav: React.FC<MainNavProps> = ({ configuracion }) => {
 
     const sections: Section[] = useMemo(() => [
         { id: "inicio", label: "Inicio", isRoute: false },
-        { id: "expertos", label: "Expertos", isRoute: true, url: "/expertos" },
+        /*{ id: "expertos", label: "Expertos", isRoute: true, url: "/expertos" },*/
         { id: "costos", label: "Costos", isRoute: false },
         { id: "sede", label: "Sede", isRoute: true, url: "/sede" },
     ], []);

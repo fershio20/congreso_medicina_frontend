@@ -87,6 +87,13 @@ export interface ConfiguracionData {
     color_secondary?: string;
     color_text?: string;
     color_accent?: string;
+    footer?:{
+        copy_text?: string;
+        social_facebook?: string;
+        social_instagram?: string;
+        social_twitter?: string;
+        social_mail?: string;
+    }
     main_navigation:{
         dark_mode: boolean;
         customClass?: string;
@@ -112,6 +119,7 @@ export interface StrapiConfiguracionResponse {
         color_secondary?: string;
         color_text?: string;
         color_accent?: string;
+        footer?: ConfiguracionData['footer'];
     };
 }
 

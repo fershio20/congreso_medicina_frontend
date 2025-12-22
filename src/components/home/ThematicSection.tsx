@@ -54,7 +54,7 @@ const ThematicSection: React.FC<ThematicSectionProps> = ({ configuracion }) => {
     console.log('EJES',data)
     return (
         <section id="ejes" className="bg-white">
-            <div className="container max-w-[1280px] mx-auto px-4  pt-10 pb-52">
+            <div className="container max-w-[1280px] mx-auto px-4  pt-50 pb-52">
                 <h2 
                     className="text-4xl text-center md:text-5xl font-heading font-bold mb-12"
                     style={{

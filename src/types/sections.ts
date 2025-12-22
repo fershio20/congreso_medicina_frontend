@@ -106,6 +106,7 @@ export interface RawTallerData {
 
 // Cost Section Types
 export interface CostosDataInterface {
+    costos: string | TrustedHTML;
     TituloSection?: string;
     CostosSectionHabilitado?: boolean;
     imageBackground?: {

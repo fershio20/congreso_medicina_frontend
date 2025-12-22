@@ -170,7 +170,7 @@ const CustomSection: React.FC<CustomSectionProps> = ({
     );
 
     const ContentSection = () => (
-        <div className="w-full lg:w-1/2 p-4 sm:p-6 lg:p-8 xl:p-12 flex flex-col justify-center bg-white">
+        <div className="w-full lg:w-1/2 p-4 sm:p-6 lg:p-8 xl:p-12 flex flex-col justify-center bg-blue-50 ">
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-heading font-bold text-[var(--secondary-color)] mb-4 sm:mb-6 leading-tight">
                 {Title}
             </h2>

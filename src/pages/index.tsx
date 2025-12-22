@@ -51,8 +51,8 @@ export const getStaticProps: GetStaticProps<HomePageProps> = async () => {
 export default function Home({heroData, globalSEO, logoUrl, configuracion}: HomePageProps) {
 
 
-    console.log("Configuracion en Home:", configuracion);
-    console.log("HeroData en Home:", heroData);
+    // console.log("Configuracion en Home!!!!!!!!!:", configuracion);
+    // console.log("HeroData en Home:", heroData);
     return (
         <>
             <SEO
@@ -70,7 +70,7 @@ export default function Home({heroData, globalSEO, logoUrl, configuracion}: Home
                 <IntroSection configuracion={configuracion}/>
                 <ExpertSection/>
                 <PreCongreso/>
-                <CostSection/>
+                <CostSection configuracion={configuracion}/>
 
                 {/*<EjesSection />*/}
                  <ThematicSection configuracion={configuracion} />
