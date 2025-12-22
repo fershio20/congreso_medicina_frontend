@@ -47,6 +47,7 @@ const CostSection: React.FC<CostSectionProps> = ({ configuracion }) => {
         return `
             .tableCost .table {
                 width: 100%;
+                margin: auto;
                 text-align: left;
             }
             .tableCost table {
@@ -61,14 +62,14 @@ const CostSection: React.FC<CostSectionProps> = ({ configuracion }) => {
             }
             .tableCost table thead {
                 background-color: ${mainColor};
-                color: ${textColor};
+                color: #FFFFFF;
             }
             .tableCost table thead th {
                 padding: 1rem;
                 text-align: center;
                 font-weight: bold;
                 border: 1px solid ${secondaryColor};
-                color: ${textColor};
+                color: #FFF;
                 background-color: ${mainColor};
             }
             .tableCost table tbody tr {
