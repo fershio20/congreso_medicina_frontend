@@ -7,6 +7,7 @@ import { getProxyUrl } from "@/lib/utils";
 import type { ConfiguracionData } from "@/types/home";
 
 interface EjeTematico {
+    color?: string;
     id: number;
     Titulo: string;
     descripcion: string;
@@ -54,9 +55,9 @@ const ThematicSection: React.FC<ThematicSectionProps> = ({ configuracion }) => {
     console.log('EJES',data)
     return (
         <section id="ejes" className="bg-white">
-            <div className="container max-w-[1280px] mx-auto px-4  pt-50 pb-52">
+            <div className="container max-w-[1280px] mx-auto px-4  pt-50 pb-52 grid grid-cols-12">
                 <h2 
-                    className="text-4xl text-center md:text-5xl font-heading font-bold mb-12"
+                    className="text-4xl text-center md:text-5xl font-heading font-bold mb-12 col-span-5"
                     style={{
                         color: configuracion?.color_main || configuracion?.color_main || '#333'
                     }}
@@ -64,31 +65,35 @@ const ThematicSection: React.FC<ThematicSectionProps> = ({ configuracion }) => {
                     {data.EjesTematicosTitulo || 'Ejes temáticos'}
                 </h2>
 
-                {data.EjesTematicosSection && data.EjesTematicosSection.map((section, index) => (
-                    <div key={index} className="mb-20">
-                        <h3 
-                            className="text-2xl font-semibold mb-8"
-                            style={{
-                                color: configuracion?.color_main || 'inherit'
-                            }}
-                        >
-                            {section.SubTitulo}
-                        </h3>
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center">
-                            {section.EjesTematicos.map((item) => (
-                                <div key={item.id} className="w-full">
+                <div className={'col-span-7'}>
+                    {data.EjesTematicosSection && data.EjesTematicosSection.map((section, index) => (
+                        <div key={index} className="mb-20">
+                            <h3
+                                className={`text-2xl font-semibold mb-8 ${section.SubTitulo ? section.SubTitulo : 'hidden'}`}
+                                style={{
+                                    color: configuracion?.color_main || 'inherit'
+                                }}
+                            >
+                                {section.SubTitulo}
+                            </h3>
+                            <div className="flex flex-col gap-4">
+                                {section.EjesTematicos.map((item) => (
+                                    <div key={item.id} className="">
 
-                                    <ThematicCard
-                                        title={item.Titulo}
-                                        description={item.descripcion ? item.descripcion : ''}
-                                        main_color={configuracion?.color_main || ''}
-                                        iconImg={item.ImagenDestacada?.url ? URL_DOMAIN + item.ImagenDestacada.url : ""}
-                                    />
-                                </div>
-                            ))}
+                                        <ThematicCard
+                                            title={item.Titulo}
+                                            description={item.descripcion ? item.descripcion : ''}
+                                            main_color={configuracion?.color_main || ''}
+                                            iconImg={item.ImagenDestacada?.url ? URL_DOMAIN + item.ImagenDestacada.url : ""}
+                                            color={item.color? item.color : ''}
+                                        />
+                                    </div>
+                                ))}
+                            </div>
                         </div>
-                    </div>
-                ))}
+                    ))}
+                </div>
+
             </div>
         </section>
     );

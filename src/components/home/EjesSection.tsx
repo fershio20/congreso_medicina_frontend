@@ -108,7 +108,7 @@ const EjesSection: React.FC = () => {
     if (!data?.EjesTematicosHabilitados) return null;
 
     return (
-        <section id="ejes" className="bg-white">
+        <section id="ejes2" className="bg-white">
             <div className="container max-w-[1280px] mx-auto px-4 text-center pt-10 pb-52">
                 <h2 className="text-4xl md:text-5xl font-heading font-bold mb-12 text-[var(--secondary-color)]">Ejes </h2>
 

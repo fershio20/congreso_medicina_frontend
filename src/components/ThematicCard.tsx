@@ -5,15 +5,16 @@ interface ThematicCardProps {
     description: string;
     iconImg: string | null;
     main_color?: string | null;
+    color?: string;
 }
 
-const ThematicCard: React.FC<ThematicCardProps> = ({title, description, main_color}) => {
+const ThematicCard: React.FC<ThematicCardProps> = ({title, description, main_color, color='#333'}) => {
     return (
         <>
 
 
             <div
-                className="group max-w-sm p-6 h-[300px] hover:cursor-pointer bg-[#fff] border border-gray-200 hover:border-2 hover:border-blue-800  rounded-lg transition-all ease-in-out hover:shadow-lg dark:bg-gray-800 dark:border-gray-700 gap-10 relative">
+                className="group w-full sm:max-w-sm md:max-w-full p-6 h-[230px] hover:cursor-pointer bg-[#fff] border border-gray-200 hover:border-2 hover:border-blue-800  rounded-lg transition-all ease-in-out hover:shadow-lg dark:bg-gray-800 dark:border-gray-700 gap-10 relative">
                 {/*<svg className="w-7 h-7 text-gray-500 dark:text-gray-400 mb-3" aria-hidden="true"
                      xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
                     <path
@@ -26,7 +27,19 @@ const ThematicCard: React.FC<ThematicCardProps> = ({title, description, main_col
                             {title}
                         </h5>
                     </a>
-                    <div className={' h-[5px] w-1/3'} style={{backgroundColor: main_color? main_color : '#FFF'}}></div>
+                    {color && (
+                        <>
+                            <div className={' h-[5px] w-1/3'} style={{backgroundColor: color}}></div>
+                        </>
+
+                    )}
+                    {(main_color && !color) && (
+                        <>
+                            <div className={' h-[5px] w-1/3'} style={{backgroundColor: main_color}}></div>
+                        </>
+
+                    )}
+
                 </div>
                 {description &&(
                 <div
