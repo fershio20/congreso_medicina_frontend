@@ -55,19 +55,22 @@ const ThematicSection: React.FC<ThematicSectionProps> = ({ configuracion }) => {
     console.log('EJES',data)
     return (
         <section id="ejes" className="bg-white">
-            <div className="container max-w-[1280px] mx-auto px-4  pt-50 pb-52 grid grid-cols-12">
-                <h2 
-                    className="text-4xl text-center md:text-5xl font-heading font-bold mb-12 col-span-5"
-                    style={{
-                        color: configuracion?.color_main || configuracion?.color_main || '#333'
-                    }}
-                >
-                    {data.EjesTematicosTitulo || 'Ejes temáticos'}
-                </h2>
+            <div className="container max-w-[1280px] mx-auto px-4 pt-50 pb-52 grid grid-cols-12 items-start relative">
+
+                <div className="col-span-5  h-full">
+                    <div className="sticky top-[100px]">
+                        <h2
+                            className="text-4xl md:text-5xl font-heading font-bold mb-12"
+                            style={{ color: configuracion?.color_main || "#333" }}
+                        >
+                            {data.EjesTematicosTitulo || "Ejes temáticos"}
+                        </h2>
+                    </div>
+                </div>
 
                 <div className={'col-span-7'}>
                     {data.EjesTematicosSection && data.EjesTematicosSection.map((section, index) => (
-                        <div key={index} className="mb-20">
+                        <div key={index} className="">
                             <h3
                                 className={`text-2xl font-semibold mb-8 ${section.SubTitulo ? section.SubTitulo : 'hidden'}`}
                                 style={{

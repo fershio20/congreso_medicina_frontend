@@ -55,7 +55,7 @@ const Footer: React.FC<FooterProps> = ({ configuracion }) => {
         }
     };
 
-    console.log('Footer configuracion:', configuracion)
+    // console.log('Footer configuracion:', configuracion)
     return (
         <footer 
             className="py-0 pb-12"

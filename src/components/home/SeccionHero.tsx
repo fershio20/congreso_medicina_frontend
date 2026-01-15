@@ -86,19 +86,9 @@ export default function SeccionHero({ heroData, configuracion }: SeccionHeroProp
                 className="container max-w-[1280px] mt-10 mx-auto flex flex-col md:flex-row items-center px-4  h-auto relative z-30">
                 {/* Left Side */}
                 <div className="grid grid-cols-12 w-full gap-4">
-                    <div className={'col-span-12'}>
-                        {heroData.destacado.url && (
-                            <>
-                                <img
-                                    src={`${URL_DOMAIN}${heroData.destacado.url}`}
-                                    alt="Hero Illustration 1"
-                                    className="w-full max-w-1/2 mx-auto"
-                                />
-                            </>
-                        )}
-                    </div>
-                    <div className={' flex flex-col justify-center col-span-12'}>
-                        <h2 className={'text-center'}>
+
+                    <div className={' flex flex-col justify-center col-span-8'}>
+                        <h2 className={'text-left text-5xl uppercase'}>
                             <span
                                     style={{
                                         color:configuracion?.color_main || 'inherit',
@@ -118,7 +108,7 @@ export default function SeccionHero({ heroData, configuracion }: SeccionHeroProp
                         >
                             {heroData.descripcion}
                         </p>
-                        <div className={'text-center'}>
+                        <div className={''}>
                             <a href="#conocer-mas"
                                style={{
                                    background: configuracion?.color_main || 'inherit'
@@ -128,7 +118,17 @@ export default function SeccionHero({ heroData, configuracion }: SeccionHeroProp
                             </a>
                         </div>
                     </div>
-
+                    <div className={'col-span-4'}>
+                        {heroData.destacado.url && (
+                            <>
+                                <img
+                                    src={`${URL_DOMAIN}${heroData.destacado.url}`}
+                                    alt="Hero Illustration 1"
+                                    className="w-full mx-auto"
+                                />
+                            </>
+                        )}
+                    </div>
 
 
                 </div>
