@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useMemo } from "react";
-import { URL_DOMAIN } from "@/lib/globalConstants";
+import {URL_DOMAIN, URL_DOMAIN_IMG} from "@/lib/globalConstants";
 import CustomSection from "./CustomSection";
 import { ArrowRight } from "lucide-react";
 import { CustomSectionData } from "@/types/blocks";
@@ -54,9 +54,9 @@ const SedeCongresoSection: React.FC = () => {
 
     // Determine image source - use large format if available, fallback to original
     const imageSrc = data.featured_image?.formats?.large?.url 
-        ? `${URL_DOMAIN}${data.featured_image.formats.large.url}`
+        ? `${URL_DOMAIN_IMG}${data.featured_image.formats.large.url}`
         : data.featured_image?.url 
-        ? `${URL_DOMAIN}${data.featured_image.url}`
+        ? `${URL_DOMAIN_IMG}${data.featured_image.url}`
         : "/congreso/bourbone-hotel.jpg";
 
     // Determine alignment - default to 'left' if null

@@ -1,5 +1,5 @@
 import Countdown from '@/components/Countdown'
-import {URL_DOMAIN} from "@/lib/globalConstants";
+import {URL_DOMAIN, URL_DOMAIN_IMG} from "@/lib/globalConstants";
 import type { ConfiguracionData } from "@/types/home";
 
 interface HomeSectionData {
@@ -60,7 +60,10 @@ export default function SeccionHero({ heroData, configuracion }: SeccionHeroProp
         );
     }
 
-
+    console.group('start')
+        console.log('URL_DOMAIN', URL_DOMAIN)
+        console.log('heroData', heroData.destacado.url)
+    console.groupEnd()
 
     // console.log('HERODATA', heroData);
     return (
@@ -119,10 +122,11 @@ export default function SeccionHero({ heroData, configuracion }: SeccionHeroProp
                         </div>
                     </div>
                     <div className={'col-span-4'}>
+
                         {heroData.destacado.url && (
                             <>
                                 <img
-                                    src={`${URL_DOMAIN}${heroData.destacado.url}`}
+                                    src={`${URL_DOMAIN_IMG}${heroData.destacado.url}`}
                                     alt="Hero Illustration 1"
                                     className="w-full mx-auto"
                                 />

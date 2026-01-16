@@ -1,6 +1,6 @@
 'use client'
 import { useEffect, useState } from "react";
-import { URL_DOMAIN } from "@/lib/globalConstants";
+import {URL_DOMAIN, URL_DOMAIN_IMG} from "@/lib/globalConstants";
 import { getProxyUrl } from "@/lib/utils";
 import type { ConfiguracionData } from "@/types/home";
 
@@ -30,12 +30,14 @@ export default function IntroSection({ configuracion }: IntroSectionProps) {
                     setHomeGeneral({
                         titulo: section.Titulo ? section.Titulo : '',
                         DescripcionBody: section.DescripcionBody ? section.DescripcionBody : '',
-                        logoCongreso: section.ImagenDestacada?.url ? URL_DOMAIN + section.ImagenDestacada.url : ''
+                        logoCongreso: section.ImagenDestacada?.url ? URL_DOMAIN_IMG + section.ImagenDestacada.url : ''
                     })
                 }
             })
             .catch(err => console.error('Error loading home section:', err))
     }, [])
+
+    console.log("IntroSection HomeGeneral:", HomeGeneral?.logoCongreso)
 
     return (
         <>
