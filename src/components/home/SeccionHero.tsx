@@ -62,7 +62,10 @@ export default function SeccionHero({ heroData, configuracion }: SeccionHeroProp
 
     console.group('start')
         console.log('URL_DOMAIN', URL_DOMAIN)
+        console.log('URL_DOMAIN_IMG', URL_DOMAIN_IMG)
         console.log('heroData', heroData.destacado.url)
+        console.log('TET IMG', URL_DOMAIN_IMG + heroData.destacado.url)
+
     console.groupEnd()
 
     // console.log('HERODATA', heroData);
