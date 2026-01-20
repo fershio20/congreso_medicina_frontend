@@ -54,7 +54,7 @@ body {
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-merriweather), serif;
+  font-family: var(--font-albert-sans), sans-serif;
 }
 /* Tipografías Golden Ratio */
 h1 {
@@ -273,4 +273,56 @@ section{
 
 .rich-text-content a:hover {
   color: rgba(15, 98, 165, 0.8);
+}
+
+/* Blur container with animated shapes */
+.shape {
+  margin: 0 auto;
+  aspect-ratio: 1;
+  position: relative;
+  
+  --width: 100%;
+  --scale: 3;
+  --opacity: 0.60;
+  --top: 0;
+  --left: 0;
+  --path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
+  --background: linear-gradient(hotpink, red, orange, yellow, hotpink);
+  
+  --offset: 0deg;
+  --speed: 8000ms;
+  
+  clip-path: var(--path);
+  background: var(--background);
+  scale: var(--scale);
+  opacity: var(--opacity);
+  width: var(--width);
+  top: var(--top);
+  left: var(--left);
+  rotate: var(--offset);
+  
+  mix-blend-mode: difference;
+  
+  animation: turn var(--speed) linear forwards infinite;
+}
+
+@keyframes turn {
+  to {
+    rotate: calc(var(--offset) + 1turn);
+  }
+}
+
+.blur-container {
+  --blur: 40px;
+  filter: blur(var(--blur));
+  height: 100vh;
+  width: 100%;
+  
+  display: grid;
+  overflow: hidden;
+}
+
+.blur-container > * {
+  grid-column: 1 / -1;
+  grid-row: 1 / -1;
 }

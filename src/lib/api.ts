@@ -116,14 +116,14 @@ export async function fetchLogoUrl(): Promise<string | null> {
  */
 export async function fetchConfiguracion(): Promise<ConfiguracionData | null> {
     const json = await fetchServerSide<StrapiConfiguracionResponse>(
-        "/api/configuracion?populate[logo][populate]=*&populate[main_navigation][populate]=*&populate[footer][populate]=*"
+        "/api/configuracion?populate[logo][populate]=*&populate[main_navigation][populate]=*"
     );
     
     if (!json || !json.data) return null;
     
     // Handle both response formats (with attributes or direct)
     const data = json.data.attributes || json.data;
-    // console.log(' FETCH LOG', data);
+    
     if (!data) return null;
     
     return {
@@ -137,14 +137,6 @@ export async function fetchConfiguracion(): Promise<ConfiguracionData | null> {
         main_navigation:{
             variant: 'default',
             dark_mode: false,
-        },
-        footer:{
-            copy_text: data.footer?.copy_text ||'',
-            social_facebook: data.footer?.social_facebook ||'',
-            social_instagram: data.footer?.social_instagram ||'',
-            social_twitter: data.footer?.social_twitter ||'',
-            social_mail: data.footer?.social_mail ||'',
-
         }
     };
 }
@@ -221,150 +213,5 @@ export async function fetchExperts(): Promise<ExpertData[]> {
     });
     
     return expertsData;
-}
-
-/**
- * Interface para la respuesta de Turismo Page de Strapi
- */
-interface StrapiTurismoPageResponse {
-    data?: {
-        id?: number;
-        show_others_hotels?: boolean;
-        show_interest_location?: boolean;
-        header?: {
-            id?: number;
-            title?: string;
-            description?: string;
-        } | null;
-        sede_hotel?: {
-            id?: number;
-            title?: string;
-            isAvailable?: boolean | null;
-            description?: string;
-            direccion?: string;
-            telefono?: string;
-            map_location?: string;
-            email?: string;
-        };
-    };
-}
-
-export interface TurismoPageData {
-    id: number;
-    show_others_hotels: boolean;
-    show_interest_location: boolean;
-    header: {
-        id: number;
-        title: string;
-        description: string;
-    } | null;
-    sede_hotel: {
-        id: number;
-        title: string;
-        isAvailable: boolean | null;
-        description: string;
-        direccion: string;
-        telefono: string;
-        map_location: string;
-        email: string;
-    };
-}
-
-/**
- * Obtiene los datos de la página de turismo/sede
- */
-export async function fetchTurismoPage(): Promise<TurismoPageData | null> {
-    const json = await fetchServerSide<StrapiTurismoPageResponse>(
-        "/api/turismo-page?populate=*"
-    );
-    
-    if (!json || !json.data) return null;
-    
-    const data = json.data;
-    
-    return {
-        id: data.id || 0,
-        show_others_hotels: data.show_others_hotels ?? true,
-        show_interest_location: data.show_interest_location ?? true,
-        header: data.header ? {
-            id: data.header.id || 0,
-            title: data.header.title || '',
-            description: data.header.description || '',
-        } : null,
-        sede_hotel: {
-            id: data.sede_hotel?.id || 0,
-            title: data.sede_hotel?.title || '',
-            isAvailable: data.sede_hotel?.isAvailable ?? null,
-            description: data.sede_hotel?.description || '',
-            direccion: data.sede_hotel?.direccion || '',
-            telefono: data.sede_hotel?.telefono || '',
-            map_location: data.sede_hotel?.map_location || '',
-            email: data.sede_hotel?.email || '',
-        },
-    };
-}
-
-/**
- * Tipos para la respuesta del plugin Navigation
- */
-export interface NavigationItem {
-    id: number;
-    title: string;
-    type: string;
-    path: string;
-    externalPath?: string | null;
-    uiRouterKey?: string | null;
-    menuAttached?: boolean;
-    order?: number;
-    parent?: number | null;
-    related?: {
-        id: number;
-        __typename: string;
-        [key: string]: any;
-    } | null;
-    items?: NavigationItem[];
-}
-
-export interface NavigationResponse {
-    id: number;
-    name: string;
-    slug: string;
-    visible: boolean;
-    items: NavigationItem[];
-}
-
-/**
- * Opciones para obtener la navegación
- */
-export interface NavigationOptions {
-    type?: 'FLAT' | 'TREE';
-    menu?: boolean;
-    path?: string;
-}
-
-/**
- * Obtiene la navegación desde el plugin Navigation de Strapi
- * @param navigationIdOrSlug - ID numérico o slug de la navegación (ej: 1, "main-menu")
- * @param options - Opciones adicionales para filtrar la respuesta
- * @returns Promise con la estructura de navegación o null si falla
- */
-export async function fetchNavigation(
-    navigationIdOrSlug: string | number,
-    options: NavigationOptions = {}
-): Promise<NavigationResponse | null> {
-    const { type = 'TREE', menu, path } = options;
-    
-    // Construir query string con los parámetros opcionales
-    const queryParams = new URLSearchParams();
-    if (type) queryParams.append('type', type);
-    if (menu !== undefined) queryParams.append('menu', menu.toString());
-    if (path) queryParams.append('path', path);
-    
-    const queryString = queryParams.toString();
-    const endpoint = `/api/navigation/render/${navigationIdOrSlug}${queryString ? `?${queryString}` : ''}`;
-    
-    const json = await fetchServerSide<NavigationResponse>(endpoint);
-    
-    return json;
 }
 

@@ -1,5 +1,5 @@
 import type { AppProps } from 'next/app';
-import { Geist, Geist_Mono, Inter, Rubik, Merriweather } from "next/font/google";
+import { Geist, Geist_Mono, Inter, Rubik, Merriweather, Albert_Sans } from "next/font/google";
 import "../styles/globals.css";
 
 // Fonts configuration
@@ -34,11 +34,18 @@ const merriweather = Merriweather({
   display: "swap",
 });
 
+const albertSans = Albert_Sans({
+  subsets: ["latin"],
+  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
+  variable: "--font-albert-sans",
+  display: "swap",
+});
+
 export default function MyApp({ Component, pageProps }: AppProps) {
   return (
     <>
       {/* Contenido de la aplicación */}
-      <div className={`${rubik.variable} ${inter.variable} ${geistSans.variable} ${geistMono.variable} ${merriweather.variable} antialiased`}>
+      <div className={`${rubik.variable} ${inter.variable} ${geistSans.variable} ${geistMono.variable} ${merriweather.variable} ${albertSans.variable} antialiased`}>
         <Component {...pageProps} />
       </div>
 
