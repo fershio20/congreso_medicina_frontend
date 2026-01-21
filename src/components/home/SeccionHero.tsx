@@ -35,7 +35,6 @@ export default function SeccionHero({ heroData, configuracion }: SeccionHeroProp
         '/paraguay/alamy_T3W3J8.jpg',
         '/paraguay/alamy-1764852100.jpg',
         '/paraguay/eef8598a53.jpg',
-        '/paraguay/fc8edd98da_1.jpg',
         '/paraguay/fc8edd98da.jpg',
         '/paraguay/nosotros.jpg',
         '/paraguay/shutterstock_2544551389.jpg',
@@ -216,7 +215,7 @@ export default function SeccionHero({ heroData, configuracion }: SeccionHeroProp
                     {carouselImages.map((img, index) => (
                         <div 
                             key={`first-${index}`}
-                            className="h-[250px] w-[350px] flex-shrink-0 overflow-hidden rounded-sm"
+                            className="h-[250px] w-[350px] flex-shrink-0 overflow-hidden rounded-sm border-2 border-red-500 shadow"
                         >
                             <img 
                                 src={img} 
@@ -229,12 +228,12 @@ export default function SeccionHero({ heroData, configuracion }: SeccionHeroProp
                     {carouselImages.map((img, index) => (
                         <div 
                             key={`second-${index}`}
-                            className="h-[250px] w-[350px] flex-shrink-0 overflow-hidden rounded-sm"
+                            className="h-[250px] w-[350px] flex-shrink-0 overflow-hidden rounded-sm "
                         >
                             <img 
                                 src={img} 
                                 alt={`Featured ${index + 1}`} 
-                                className={'w-full h-full object-cover'}
+                                className={'w-full h-full object-cover '}
                             />
                         </div>
                     ))}

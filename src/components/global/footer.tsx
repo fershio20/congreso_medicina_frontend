@@ -4,7 +4,7 @@ import React, { useMemo } from "react";
 import { FaFacebookF, FaTwitter, FaInstagram } from "react-icons/fa";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
-import {URL_DOMAIN} from "@/lib/globalConstants";
+import {URL_DOMAIN, URL_DOMAIN_IMG} from "@/lib/globalConstants";
 import useSWR from 'swr';
 import { fetcher } from '@/lib/swr';
 import type { HomeGeneralInterface } from '@/types/sections';
@@ -20,7 +20,7 @@ const Footer: React.FC<FooterProps> = ({ configuracion }) => {
 
     // Fetch logo using SWR
     const { data: homePageData } = useSWR(
-        `${URL_DOMAIN}/api/home-page?populate[HomeGeneral][populate]=*`,
+        `${URL_DOMAIN}/api/configuracion?populate[logo][populate]=*&populate[main_navigation][populate]=*&populate[footer][populate]=*`,
         fetcher,
         {
             revalidateOnFocus: false,
@@ -30,6 +30,7 @@ const Footer: React.FC<FooterProps> = ({ configuracion }) => {
             shouldRetryOnError: false, // Don't retry on any error
         }
     );
+    console.log('TEST')
 
     // Extract HomeGeneral from SWR data
     const HomeGeneral: HomeGeneralInterface | null = useMemo(() => {
@@ -55,10 +56,10 @@ const Footer: React.FC<FooterProps> = ({ configuracion }) => {
         }
     };
 
-    // console.log('Footer configuracion:', configuracion)
+    console.log('Footer configuracion:', homePageData?.data?.footer.copy_text)
     return (
         <footer 
-            className="py-0 pb-12"
+            className="py-0 pb-12 pt-5"
             style={{
                 backgroundColor: configuracion?.color_main || '#045084'
             }}
@@ -66,11 +67,11 @@ const Footer: React.FC<FooterProps> = ({ configuracion }) => {
             <div className="container mx-auto px-4 text-center">
                 {/* Logo */}
                 <div className="flex justify-center mb-8">
-                    {HomeGeneral?.logoCongreso && (
+                    {homePageData?.data?.footer?.logo?.url && (
                         <div className="bg-white rounded-full shadow-lg p-2">
                             {/* eslint-disable-next-line @next/next/no-img-element */}
                             <img
-                                src={HomeGeneral.logoCongreso}
+                                src={`${URL_DOMAIN_IMG}${homePageData.data.footer.logo.url}`}
                                 alt="Sociedad Paraguaya de Pediatría"
                                 className="h-16 w-16 object-cover rounded-full"
                             />
@@ -128,26 +129,26 @@ const Footer: React.FC<FooterProps> = ({ configuracion }) => {
                 <div className="border-t border-white/20 pt-6 flex flex-col md:flex-row justify-between items-center">
                     {/* Copyright */}
                     <p className="text-xs text-white/80 mb-4 md:mb-0">
-                        {configuracion?.footer?.copy_text || ''}&nbsp;
+                        {homePageData?.data?.footer.copy_text || ''}&nbsp;
                         Desarrollado por <a className='underline hover:text-white transition-colors duration-200' href="https://www.rocketpy.com/" target='_blank' rel="noopener noreferrer">Rocket Studio</a>
                     </p>
 
                     {/* Redes sociales */}
                     <div className="flex justify-center gap-4 text-white text-xl">
-                        {configuracion?.footer?.social_facebook &&(
-                        <a href="https://www.facebook.com/CongresodePediatria" aria-label="Facebook" className="hover:text-gray-300 transition-colors duration-200">
+                        {homePageData?.data?.footer.social_facebook &&(
+                        <a href={`/${homePageData?.data?.footer.social_facebook}`} aria-label="Facebook" className="hover:text-gray-300 transition-colors duration-200">
                             <FaFacebookF />
                         </a>
                         )}
 
-                        {configuracion?.footer?.social_twitter &&(
-                        <a href="https://x.com/sppcongreso" aria-label="Twitter" className="hover:text-gray-300 transition-colors duration-200">
+                        {homePageData?.data?.footer.social_twitter &&(
+                        <a href={`/${homePageData?.data?.footer.social_twitter}`} aria-label="Twitter" className="hover:text-gray-300 transition-colors duration-200">
                             <FaTwitter />
                         </a>
                         )}
 
-                        {configuracion?.footer?.social_instagram &&(
-                        <a href="https://www.instagram.com/sppcongreso/" aria-label="Instagram" className="hover:text-gray-300 transition-colors duration-200">
+                        {homePageData?.data?.footer.social_instagram &&(
+                        <a href={`/${homePageData?.data?.footer.social_instagram}`} aria-label="Instagram" className="hover:text-gray-300 transition-colors duration-200">
                             <FaInstagram />
                         </a>
                         )}
