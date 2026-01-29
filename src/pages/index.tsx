@@ -50,14 +50,14 @@ export const getStaticProps: GetStaticProps<HomePageProps> = async () => {
 
 export default function Home({heroData, globalSEO, logoUrl, configuracion}: HomePageProps) {
 
-
+        console.log('Home Page Rendered SEO', globalSEO);
     // console.log("Configuracion en Home!!!!!!!!!:", configuracion);
     // console.log("HeroData en Home:", heroData);
     return (
         <>
             <SEO
-                globalSEO={globalSEO}
-                pageTitle="Congreso de Pediatría Paraguay 2025"
+                globalSEO={globalSEO ? globalSEO : null}
+                pageTitle=""
                 pageDescription="Congreso Internacional de Pediatría en Paraguay - Evento médico especializado en pediatría"
                 pageUrl="https://congresopediatriapy.com"
                 pageType="website"

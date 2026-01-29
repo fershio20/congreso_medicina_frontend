@@ -100,7 +100,7 @@ export const swrConfig: SWRConfiguration = {
 
 // Custom hooks for common API endpoints
 export const useTurismoPage = () => {
-    return useSWR('/api/turismo-page?populate=*', fetcher, swrConfig);
+    return useSWR('/api/turismo-page?populate[sede_hotel][populate]=*&populate[header][populate]=*&populate[SEO][populate]=*', fetcher, swrConfig);
 };
 
 export const useTurismos = () => {

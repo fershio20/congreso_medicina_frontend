@@ -24,6 +24,9 @@ interface TurismoPageData {
         telefono: string;
         map_location: string;
         email: string;
+        featured_image?:{
+            url: string;
+        }
     };
 }
 
@@ -75,6 +78,8 @@ const DynamicHotelesSection: React.FC = () => {
             </div>
         );
     }
+
+    console.log('Turismo Page Data:', turismoPageData);
 
     // Error handling
     if (turismoPageError || turismoError) {
@@ -154,13 +159,13 @@ const DynamicHotelesSection: React.FC = () => {
         <div className="space-y-24">
             {/* La Sede - Featured Hotel */}
             <section>
-                <h2 className="text-4xl font-bold text-blue-900 mb-8">La Sede</h2>
+                <h2 className="text-4xl font-bold text-blue-900 mb-8">La Sede!</h2>
                 <FeaturedHotel 
                     name={turismoPageData.sede_hotel.title}
                     description={turismoPageData.sede_hotel.description}
                     address={turismoPageData.sede_hotel.direccion}
                     phone={turismoPageData.sede_hotel.telefono}
-                    imageSrc="/congreso/bourbone-hotel.jpg"
+                    imageSrc={turismoPageData.sede_hotel.featured_image?.url ? `${URL_DOMAIN}${turismoPageData.sede_hotel.featured_image.url}` : "/congreso/bourbone-hotel.jpg"}
                     mapLocation={turismoPageData.sede_hotel.map_location}
                     email={turismoPageData.sede_hotel.email}
                 />

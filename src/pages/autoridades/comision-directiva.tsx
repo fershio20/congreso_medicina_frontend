@@ -8,6 +8,7 @@ import SEO from "@/components/SEO";
 
 // Global SEO interface
 interface GlobalSEO {
+    site_title: string;
     site_description: string;
     site_keywords: string;
     canonical_domain: string;
