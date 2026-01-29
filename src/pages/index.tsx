@@ -58,8 +58,8 @@ export default function Home({heroData, globalSEO, logoUrl, configuracion}: Home
             <SEO
                 globalSEO={globalSEO ? globalSEO : null}
                 pageTitle=""
-                pageDescription="Congreso Internacional de Pediatría en Paraguay - Evento médico especializado en pediatría"
-                pageUrl="https://congresopediatriapy.com"
+                pageDescription=""
+                pageUrl=""
                 pageType="website"
                 logoUrl={logoUrl}
             />
