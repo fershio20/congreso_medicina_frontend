@@ -215,7 +215,7 @@ export default function SeccionHero({ heroData, configuracion }: SeccionHeroProp
                     {carouselImages.map((img, index) => (
                         <div 
                             key={`first-${index}`}
-                            className="h-[250px] w-[350px] flex-shrink-0 overflow-hidden rounded-sm border-2 border-red-500 shadow"
+                            className="h-[250px] w-[350px] flex-shrink-0 overflow-hidden rounded-sm  shadow"
                         >
                             <img 
                                 src={img} 
