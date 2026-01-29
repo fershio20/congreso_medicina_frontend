@@ -4,7 +4,7 @@ import React from "react";
 import HotelCard from "./HotelCard";
 import FeaturedHotel from "./FeaturedHotel";
 import { useTurismoPage, useTurismos } from "@/lib/swr";
-import { URL_DOMAIN } from "@/lib/globalConstants";
+import {URL_DOMAIN, URL_DOMAIN_IMG} from "@/lib/globalConstants";
 
 interface TurismoPageData {
     id: number;
@@ -165,7 +165,7 @@ const DynamicHotelesSection: React.FC = () => {
                     description={turismoPageData.sede_hotel.description}
                     address={turismoPageData.sede_hotel.direccion}
                     phone={turismoPageData.sede_hotel.telefono}
-                    imageSrc={turismoPageData.sede_hotel.featured_image?.url ? `${URL_DOMAIN}${turismoPageData.sede_hotel.featured_image.url}` : "/congreso/bourbone-hotel.jpg"}
+                    imageSrc={turismoPageData.sede_hotel.featured_image?.url ? `${URL_DOMAIN_IMG}${turismoPageData.sede_hotel.featured_image.url}` : "/congreso/bourbone-hotel.jpg"}
                     mapLocation={turismoPageData.sede_hotel.map_location}
                     email={turismoPageData.sede_hotel.email}
                 />

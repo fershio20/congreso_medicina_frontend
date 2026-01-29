@@ -111,8 +111,8 @@ const MainNav: React.FC<MainNavProps> = ({ configuracion }) => {
     const sections: Section[] = useMemo(() => [
         { id: "inicio", label: "Inicio", isRoute: false },
         /*{ id: "expertos", label: "Expertos", isRoute: true, url: "/expertos" },*/
-        { id: "costos", label: "Costos", isRoute: false },
-        { id: "sede", label: "Sede", isRoute: true, url: "/sede" },
+        { id: "ejes", label: "Ejes", isRoute: false },
+        { id: "sede", label: "Sede", isRoute: false , url: "/sede" },
     ], []);
 
 
@@ -368,7 +368,7 @@ const MainNav: React.FC<MainNavProps> = ({ configuracion }) => {
                             </div>*/}
 
                             {/* Temas libres - Using Button component with principal variant */}
-                            <div className="ml-6 flex items-center">
+                            {/*<div className="ml-6 flex items-center">
                                 <Button
                                     variant="ghost"
                                     size="default"
@@ -392,7 +392,7 @@ const MainNav: React.FC<MainNavProps> = ({ configuracion }) => {
                                 >
                                     Temas libres
                                 </Button>
-                            </div>
+                            </div>*/}
                         </div>
 
                         {/* Moving bottom border */}
