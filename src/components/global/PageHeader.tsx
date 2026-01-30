@@ -1,7 +1,6 @@
 'use client'
 
 import React from "react";
-import {URL_DOMAIN_IMG} from "@/lib/globalConstants";
 
 interface PageHeaderProps {
     title: string;
@@ -18,7 +17,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({
     showBlueOverlay = true,
     className = ""
 }) => {
-    const backgroundImage = URL_DOMAIN_IMG + customBackgroundImage || "/bg-default-blue.png";
+    const backgroundImage = customBackgroundImage || "/bg-default-blue.png";
     
     return (
         <div 
