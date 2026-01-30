@@ -52,7 +52,9 @@ const ThematicSection: React.FC<ThematicSectionProps> = ({ configuracion }) => {
     }, []);
 
     if (!data?.EjesTematicosHabilitados) return null;
-    console.log('EJES',data)
+
+    // console.log('EJES',data)
+
     return (
         <section id="ejes" className="bg-white">
             <div className="container max-w-[1280px] mx-auto px-4 pt-50 pb-52 grid grid-cols-12 items-start relative">

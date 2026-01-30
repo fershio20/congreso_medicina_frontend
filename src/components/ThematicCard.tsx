@@ -16,7 +16,7 @@ const ThematicCard: React.FC<ThematicCardProps> = ({
                                                    }) => {
     const hasDescription = Boolean(description);
 
-    console.log('hasDescription', hasDescription);
+    // console.log('hasDescription', hasDescription);
 
     return (
         <div className="relative">

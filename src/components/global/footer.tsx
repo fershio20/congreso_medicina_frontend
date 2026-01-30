@@ -30,7 +30,7 @@ const Footer: React.FC<FooterProps> = ({ configuracion }) => {
             shouldRetryOnError: false, // Don't retry on any error
         }
     );
-    console.log('TEST')
+
 
     // Extract HomeGeneral from SWR data
     const HomeGeneral: HomeGeneralInterface | null = useMemo(() => {
@@ -56,7 +56,7 @@ const Footer: React.FC<FooterProps> = ({ configuracion }) => {
         }
     };
 
-    console.log('Footer configuracion:', homePageData?.data?.footer.copy_text)
+    // console.log('Footer configuracion:', homePageData?.data?.footer.copy_text)
     return (
         <footer 
             className="py-0 pb-12 pt-5"

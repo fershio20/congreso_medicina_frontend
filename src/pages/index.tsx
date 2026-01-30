@@ -50,7 +50,7 @@ export const getStaticProps: GetStaticProps<HomePageProps> = async () => {
 
 export default function Home({heroData, globalSEO, logoUrl, configuracion}: HomePageProps) {
 
-        console.log('Home Page Rendered SEO', globalSEO);
+    // console.log('Home Page Rendered SEO', globalSEO);
     // console.log("Configuracion en Home!!!!!!!!!:", configuracion);
     // console.log("HeroData en Home:", heroData);
     return (

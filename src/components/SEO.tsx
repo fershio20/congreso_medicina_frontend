@@ -58,7 +58,7 @@ const SEO: React.FC<SEOProps> = ({
                                      logoUrl
                                  }) => {
 
-    console.log('Que LLEGA EN GLOBAL SEO', globalSEO);
+    // console.log('Que LLEGA EN GLOBAL SEO', globalSEO);
     // Determine final values with fallbacks
     const finalTitle = pageSEO?.meta_title || pageTitle || globalSEO?.site_title || 'Congreso de Pediatría Paraguay 2025 !!';
     const finalDescription = pageSEO?.meta_description || pageDescription || globalSEO?.site_description || 'Congreso Internacional de Pediatría en Paraguay';

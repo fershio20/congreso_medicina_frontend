@@ -4,13 +4,14 @@ import React, { useState, useEffect, useRef, useMemo } from 'react';
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Button } from '@/components/ui/button';
 import {BACKEND_URL, URL_DOMAIN} from '@/lib/globalConstants';
 import useSWR from 'swr';
 import { fetcher } from '@/lib/swr';
 import type { HomeGeneralInterface } from '@/types/sections';
 import type { ConfiguracionData } from '@/types/home';
+import type { NavigationTree, NavigationTreeItem } from '@/types/navigation';
 
+/** Fallback sections when navigation API is unavailable */
 interface Section {
     id: string;
     label: string;
@@ -18,8 +19,41 @@ interface Section {
     url?: string;
 }
 
+const NAVIGATION_SLUG = 'navigation';
+const NAVIGATION_API = `${URL_DOMAIN}/api/navigation/render/${NAVIGATION_SLUG}?type=TREE&menu=true`;
+
+/** Normalized nav item for rendering (from API tree or fallback) */
+interface NavItem {
+    id: string;
+    label: string;
+    path: string;
+    external: boolean;
+    items?: NavItem[];
+}
+
 interface MainNavProps {
     configuracion?: ConfiguracionData | null;
+}
+
+function treeItemToNavItem(item: NavigationTreeItem, index: number): NavItem {
+    const id = item.uiRouterKey || item.slug || item.path?.replace(/^\/#?/, '') || `nav-${index}`;
+    return {
+        id,
+        label: item.title,
+        path: item.path || '#',
+        external: item.external ?? item.type === 'EXTERNAL',
+        items: item.items?.length ? item.items.map((child, i) => treeItemToNavItem(child, i)) : undefined,
+    };
+}
+
+function sectionsToNavItems(sections: Section[]): NavItem[] {
+    return sections.map((s) => ({
+        id: s.id,
+        label: s.label,
+        path: s.url || (s.isRoute ? `/${s.id}` : `/#${s.id}`),
+        external: false,
+        items: undefined,
+    }));
 }
 
 const MainNav: React.FC<MainNavProps> = ({ configuracion }) => {
@@ -29,9 +63,37 @@ const MainNav: React.FC<MainNavProps> = ({ configuracion }) => {
     const [hoveredSection, setHoveredSection] = useState<string | null>(null);
     const [activeSection, setActiveSection] = useState('inicio');
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-    const [isAutoridadesOpen, setIsAutoridadesOpen] = useState(false);
-    const [isCongresoOpen, setIsCongresoOpen] = useState(false);
     const [borderStyle, setBorderStyle] = useState({ x: 0, width: 0 });
+
+    // Fallback sections when navigation API is not used
+    const fallbackSections: Section[] = useMemo(() => [
+        { id: "inicio", label: "Inicio", isRoute: false },
+        { id: "ejes", label: "Ejes", isRoute: false },
+        { id: "sede", label: "Sede", isRoute: false, url: "/sede" },
+    ], []);
+
+    // Fetch navigation from Strapi Navigation plugin (slug: navigation)
+    const { data: navData } = useSWR<NavigationTree>(
+        NAVIGATION_API,
+        fetcher,
+        {
+            revalidateOnFocus: false,
+            revalidateOnReconnect: true,
+            dedupingInterval: 60000,
+            errorRetryCount: 0,
+            shouldRetryOnError: false,
+        }
+    );
+
+    console.log('Navigation Data:', navData);
+
+    // Normalized nav items: from API tree or fallback sections
+    const navItems: NavItem[] = useMemo(() => {
+        if (navData && Array.isArray(navData) && navData.length > 0) {
+            return navData.map((item, i) => treeItemToNavItem(item, i));
+        }
+        return sectionsToNavItems(fallbackSections);
+    }, [navData, fallbackSections]);
 
     // Fetch logo using SWR
     const { data: homePageData, error: homePageError } = useSWR(
@@ -65,27 +127,22 @@ const MainNav: React.FC<MainNavProps> = ({ configuracion }) => {
     // Refs for menu items
     const menuRefs = useRef<{ [key: string]: HTMLButtonElement | null }>({});
 
-    // Set initial border position for "Inicio"
+    // Set initial border position for first nav item
+    const firstNavId = navItems[0]?.id;
     useEffect(() => {
         const timer = setTimeout(() => {
-            const inicioButton = menuRefs.current['inicio'];
+            const firstButton = firstNavId ? menuRefs.current[firstNavId] : null;
             const menuContainer = document.getElementById('menuContainer');
             
-            if (inicioButton && menuContainer) {
-                const buttonRect = inicioButton.getBoundingClientRect();
+            if (firstButton && menuContainer) {
+                const buttonRect = firstButton.getBoundingClientRect();
                 const containerRect = menuContainer.getBoundingClientRect();
-                
                 const relativeX = buttonRect.left - containerRect.left;
-                
-                setBorderStyle({
-                    x: relativeX,
-                    width: buttonRect.width
-                });
+                setBorderStyle({ x: relativeX, width: buttonRect.width });
             }
-        }, 100); // Small delay to ensure DOM is ready
-        
+        }, 100);
         return () => clearTimeout(timer);
-    }, []);
+    }, [firstNavId]);
 
     useEffect(() => {
         // Handle hash fragment navigation
@@ -108,14 +165,6 @@ const MainNav: React.FC<MainNavProps> = ({ configuracion }) => {
         handleHashNavigation();
     }, [pathname]);
 
-    const sections: Section[] = useMemo(() => [
-        { id: "inicio", label: "Inicio", isRoute: false },
-        /*{ id: "expertos", label: "Expertos", isRoute: true, url: "/expertos" },*/
-        { id: "ejes", label: "Ejes", isRoute: false },
-        { id: "sede", label: "Sede", isRoute: false , url: "/sede" },
-    ], []);
-
-
     useEffect(() => {
         const handleScroll = () => {
             const scrollPosition = window.scrollY;
@@ -130,15 +179,15 @@ const MainNav: React.FC<MainNavProps> = ({ configuracion }) => {
                 if (scrollPosition < heroTop + heroHeight) {
                     setActiveSection('inicio');
                 } else {
-                    // Check other sections
-                    for (const section of sections) {
-                        if (section.isRoute) continue; // Skip route sections
-                        
-                        const element = document.getElementById(section.id);
+                    // Check other sections (only non-external, anchor-style items)
+                    for (const item of navItems) {
+                        if (item.external || (item.path.startsWith('http') || (item.path !== '/' && !item.path.startsWith('/#')))) continue;
+                        const sectionId = item.path === '/' ? 'inicio' : item.path.replace(/^\/#?/, '');
+                        const element = document.getElementById(sectionId);
                         if (element) {
                             const rect = element.getBoundingClientRect();
                             if (rect.top <= 100 && rect.bottom >= 100) {
-                                setActiveSection(section.id);
+                                setActiveSection(item.id);
                                 break;
                             }
                         }
@@ -149,7 +198,7 @@ const MainNav: React.FC<MainNavProps> = ({ configuracion }) => {
 
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
-    }, [sections]);
+    }, [navItems]);
 
     // Update border position and width based on current section
     useEffect(() => {
@@ -174,32 +223,32 @@ const MainNav: React.FC<MainNavProps> = ({ configuracion }) => {
         }
     }, [hoveredSection, activeSection]);
 
-    const handleSectionClick = (sectionId: string) => {
-        // Find the section configuration
-        const section = sections.find(s => s.id === sectionId);
-        
-        if (section?.isRoute) {
-            // For route sections, navigate to the dedicated page
-            router.push(section.url || `/${sectionId}`);
-        } else {
-            // Check if we're on the home page
+    const handleNavClick = (item: NavItem) => {
+        setActiveSection(item.id);
+        setIsMobileMenuOpen(false);
+
+        if (item.external || item.path.startsWith('http')) {
+            window.open(item.path, '_blank', 'noopener,noreferrer');
+            return;
+        }
+
+        const isAnchor = item.path === '/' || item.path.startsWith('/#');
+        const sectionId = isAnchor ? (item.path === '/' ? 'inicio' : item.path.replace(/^\/#?/, '')) : null;
+
+        if (isAnchor && sectionId) {
             if (pathname !== '/') {
-                // If not on home page, navigate to home page with hash
                 router.push(`/#${sectionId}`);
             } else {
-                // If on home page, scroll to section
                 if (sectionId === 'inicio') {
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                 } else {
                     const element = document.getElementById(sectionId);
-                    if (element) {
-                        element.scrollIntoView({ behavior: 'smooth' });
-                    }
+                    if (element) element.scrollIntoView({ behavior: 'smooth' });
                 }
             }
+        } else {
+            router.push(item.path || '/');
         }
-        setActiveSection(sectionId);
-        setIsMobileMenuOpen(false);
     };
 
     if(homePageError) {
@@ -222,7 +271,7 @@ const MainNav: React.FC<MainNavProps> = ({ configuracion }) => {
             <nav className="h-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex items-center justify-between h-full">
                     {/* Logo with white circular background */}
-                    <div className="flex-shrink-0">
+                    <div className="shrink-0">
                         <Link href="/" className="flex items-center">
                             <div className="bg-white rounded-full  transition-all duration-300">
                                 {(configuracion?.logo?.url || HomeGeneral?.logoCongreso) ? (
@@ -260,139 +309,94 @@ const MainNav: React.FC<MainNavProps> = ({ configuracion }) => {
                     {/* Desktop Navigation */}
                     <div className="hidden md:block relative h-full">
                         <div id="menuContainer" className="flex items-stretch h-full">
-                            {sections.map((section) => (
-                                <div key={section.id} className="relative h-full flex items-stretch">
-                                    <button
-                                        ref={(el) => { menuRefs.current[section.id] = el; }}
-                                        className={`h-full px-6 text-sm font-medium hover:cursor-pointer
-                                        
-                                        transition-all duration-300 hover:text-white flex items-center justify-center`}
-                                        onMouseEnter={() => setHoveredSection(section.id)}
-                                        onMouseLeave={() => setHoveredSection(null)}
-                                        onClick={() => handleSectionClick(section.id)}
-                                        style={{
-                                            color: configuracion?.main_navigation?.dark_mode ? '#FFF' : (configuracion?.color_main ? configuracion?.color_main : '#333'),
-                                        }}
-                                    >
-                                        {section.label}
-                                    </button>
+                            {navItems.map((item) => (
+                                <div key={item.id} className="relative h-full flex items-stretch">
+                                    {item.items && item.items.length > 0 ? (
+                                        <>
+                                            <button
+                                                ref={(el) => { menuRefs.current[item.id] = el; }}
+                                                className="h-full px-6 text-sm font-medium hover:cursor-pointer transition-all duration-300 hover:text-white flex items-center justify-center gap-2"
+                                                onMouseEnter={() => setHoveredSection(item.id)}
+                                                onMouseLeave={() => setHoveredSection(null)}
+                                                style={{
+                                                    color: configuracion?.main_navigation?.dark_mode ? '#FFF' : (configuracion?.color_main ? configuracion?.color_main : '#333'),
+                                                }}
+                                            >
+                                                {item.label}
+                                                <svg className="w-4 h-4 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                                </svg>
+                                            </button>
+                                            <AnimatePresence>
+                                                {hoveredSection === item.id && (
+                                                    <motion.div
+                                                        initial={{ opacity: 0, y: -10 }}
+                                                        animate={{ opacity: 1, y: 0 }}
+                                                        exit={{ opacity: 0, y: -10 }}
+                                                        transition={{ duration: 0.2 }}
+                                                        className="absolute top-full left-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50"
+                                                        onMouseEnter={() => setHoveredSection(item.id)}
+                                                        onMouseLeave={() => setHoveredSection(null)}
+                                                    >
+                                                        {item.items.map((child) => (
+                                                            child.external || child.path.startsWith('http') ? (
+                                                                <a
+                                                                    key={child.id}
+                                                                    href={child.path}
+                                                                    target="_blank"
+                                                                    rel="noopener noreferrer"
+                                                                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                                                >
+                                                                    {child.label}
+                                                                </a>
+                                                            ) : (
+                                                                <Link
+                                                                    key={child.id}
+                                                                    href={child.path}
+                                                                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                                                    onClick={() => { handleNavClick(child); setHoveredSection(null); }}
+                                                                >
+                                                                    {child.label}
+                                                                </Link>
+                                                            )
+                                                        ))}
+                                                    </motion.div>
+                                                )}
+                                            </AnimatePresence>
+                                        </>
+                                    ) : (
+                                        item.external || item.path.startsWith('http') ? (
+                                            <a
+                                                ref={(el) => { if (el) menuRefs.current[item.id] = el as unknown as HTMLButtonElement; }}
+                                                href={item.path}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="h-full px-6 text-sm font-medium hover:cursor-pointer transition-all duration-300 hover:text-white flex items-center justify-center"
+                                                onMouseEnter={() => setHoveredSection(item.id)}
+                                                onMouseLeave={() => setHoveredSection(null)}
+                                                style={{
+                                                    color: configuracion?.main_navigation?.dark_mode ? '#FFF' : (configuracion?.color_main ? configuracion?.color_main : '#333'),
+                                                }}
+                                            >
+                                                {item.label}
+                                            </a>
+                                        ) : (
+                                            <button
+                                                ref={(el) => { menuRefs.current[item.id] = el; }}
+                                                className="h-full px-6 text-sm font-medium hover:cursor-pointer transition-all duration-300 hover:text-white flex items-center justify-center"
+                                                onMouseEnter={() => setHoveredSection(item.id)}
+                                                onMouseLeave={() => setHoveredSection(null)}
+                                                onClick={() => handleNavClick(item)}
+                                                style={{
+                                                    color: configuracion?.main_navigation?.dark_mode ? '#FFF' : (configuracion?.color_main ? configuracion?.color_main : '#333'),
+                                                }}
+                                            >
+                                                {item.label}
+                                            </button>
+                                        )
+                                    )}
                                 </div>
                             ))}
-                            
-                            {/* Congreso Dropdown */}
-                            {/*<div className="relative h-full flex items-stretch">
-                                <button
-                                    ref={(el) => { menuRefs.current['congreso'] = el; }}
-                                    className={`h-full px-6 text-sm font-medium  transition-all duration-300  flex items-center justify-center gap-2`}
-                                    onMouseEnter={() => setIsCongresoOpen(true)}
-                                    onMouseLeave={() => setIsCongresoOpen(false)}
-                                    style={{
-                                        color: configuracion?.main_navigation?.dark_mode ? '#FFF' : (configuracion?.color_main ? configuracion?.color_main : '#333'),
-                                    }}
-                                >
-                                    Congreso
-                                    <svg className="w-4 h-4 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                                    </svg>
-                                </button>
-                                <AnimatePresence>
-                                    {isCongresoOpen && (
-                                        <motion.div
-                                            initial={{ opacity: 0, y: -10 }}
-                                            animate={{ opacity: 1, y: 0 }}
-                                            exit={{ opacity: 0, y: -10 }}
-                                            transition={{ duration: 0.2 }}
-                                            className="absolute top-full left-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50"
-                                            onMouseEnter={() => setIsCongresoOpen(true)}
-                                            onMouseLeave={() => setIsCongresoOpen(false)}
-                                        >
-                                            <Link
-                                                href="/talleres"
-                                                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                                            >
-                                                Pre Talleres
-                                            </Link>
-                                            <Link
-                                                href="/programa"
-                                                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                                            >
-                                                Programa
-                                            </Link>
-                                        </motion.div>
-                                    )}
-                                </AnimatePresence>
-                            </div>*/}
-
-                            {/* Autoridades Dropdown */}
-                            {/*<div className="relative h-full flex items-stretch">
-                                <button
-                                    ref={(el) => { menuRefs.current['autoridades'] = el; }}
-                                    className={`h-full px-6 text-sm font-medium text-white transition-all duration-300 hover:text-white flex items-center justify-center gap-2`}
-                                    onMouseEnter={() => setIsAutoridadesOpen(true)}
-                                    onMouseLeave={() => setIsAutoridadesOpen(false)}
-                                    style={{
-                                        color: configuracion?.main_navigation?.dark_mode ? '#FFF' : (configuracion?.color_main ? configuracion?.color_main : '#333'),
-                                    }}
-                                >
-                                    Autoridades
-                                    <svg className="w-4 h-4 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                                    </svg>
-                                </button>
-                                <AnimatePresence>
-                                    {isAutoridadesOpen && (
-                                        <motion.div
-                                            initial={{ opacity: 0, y: -10 }}
-                                            animate={{ opacity: 1, y: 0 }}
-                                            exit={{ opacity: 0, y: -10 }}
-                                            transition={{ duration: 0.2 }}
-                                            className="absolute top-full left-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50"
-                                            onMouseEnter={() => setIsAutoridadesOpen(true)}
-                                            onMouseLeave={() => setIsAutoridadesOpen(false)}
-                                        >
-                                            <Link
-                                                href="/autoridades/comision-directiva"
-                                                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                                            >
-                                                Comisión Directiva
-                                            </Link>
-                                            <Link
-                                                href="/autoridades/comite-organizador"
-                                                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                                            >
-                                                Comité Organizador
-                                            </Link>
-                                        </motion.div>
-                                    )}
-                                </AnimatePresence>
-                            </div>*/}
-
-                            {/* Temas libres - Using Button component with principal variant */}
-                            {/*<div className="ml-6 flex items-center">
-                                <Button
-                                    variant="ghost"
-                                    size="default"
-                                    className={`h-full px-6 rounded-none  text-white hover:text-gray-200`}
-                                    style={{
-                                        backgroundColor: configuracion?.color_accent ? configuracion.color_accent : '#045084',
-                                        // background:  '#045084',
-                                    }}
-                                    onClick={() => {
-                                        if (pathname === '/') {
-                                            // If on home page, scroll to temas libres section
-                                            const element = document.getElementById('temas-libres');
-                                            if (element) {
-                                                element.scrollIntoView({ behavior: 'smooth' });
-                                            }
-                                        } else {
-                                            // If on other pages, navigate to home page with hash
-                                            router.push('/#temas-libres');
-                                        }
-                                    }}
-                                >
-                                    Temas libres
-                                </Button>
-                            </div>*/}
                         </div>
 
                         {/* Moving bottom border */}
@@ -442,77 +446,57 @@ const MainNav: React.FC<MainNavProps> = ({ configuracion }) => {
                             className="md:hidden bg-[#045084] border-t border-gray-700"
                         >
                             <div className="px-2 pt-2 pb-3 space-y-1">
-                                {sections.map((section) => (
-                                    <button
-                                        key={section.id}
-                                        className={`block w-full text-left px-3 py-2 rounded-md text-base font-medium text-white hover:bg-[#045084] transition-colors duration-300 ${activeSection === section.id ? 'bg-[#045084]' : ''}`}
-                                        onClick={() => handleSectionClick(section.id)}
-                                    >
-                                        {section.label}
-                                    </button>
+                                {navItems.map((item) => (
+                                    <div key={item.id}>
+                                        {item.items && item.items.length > 0 ? (
+                                            <div className="px-3 py-2">
+                                                <div className="text-white font-medium mb-2">{item.label}</div>
+                                                <div className="ml-4 space-y-1">
+                                                    {item.items.map((child) => (
+                                                        child.external || child.path.startsWith('http') ? (
+                                                            <a
+                                                                key={child.id}
+                                                                href={child.path}
+                                                                target="_blank"
+                                                                rel="noopener noreferrer"
+                                                                className="block text-white hover:text-gray-300 transition-colors duration-300"
+                                                                onClick={() => setIsMobileMenuOpen(false)}
+                                                            >
+                                                                {child.label}
+                                                            </a>
+                                                        ) : (
+                                                            <Link
+                                                                key={child.id}
+                                                                href={child.path}
+                                                                className="block text-white hover:text-gray-300 transition-colors duration-300"
+                                                                onClick={() => handleNavClick(child)}
+                                                            >
+                                                                {child.label}
+                                                            </Link>
+                                                        )
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        ) : item.external || item.path.startsWith('http') ? (
+                                            <a
+                                                href={item.path}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-white hover:bg-[#045084] transition-colors duration-300"
+                                                onClick={() => setIsMobileMenuOpen(false)}
+                                            >
+                                                {item.label}
+                                            </a>
+                                        ) : (
+                                            <button
+                                                className={`block w-full text-left px-3 py-2 rounded-md text-base font-medium text-white hover:bg-[#045084] transition-colors duration-300 ${activeSection === item.id ? 'bg-[#045084]' : ''}`}
+                                                onClick={() => handleNavClick(item)}
+                                            >
+                                                {item.label}
+                                            </button>
+                                        )}
+                                    </div>
                                 ))}
-                                
-                                {/* Mobile Congreso Options */}
-                                <div className="px-3 py-2">
-                                    <div className="text-white font-medium mb-2">Congreso</div>
-                                    <div className="ml-4 space-y-1">
-                                        <Link
-                                            href="/talleres"
-                                            className="block text-white hover:text-gray-300 transition-colors duration-300"
-                                        >
-                                            Pre Talleres
-                                        </Link>
-                                        <Link
-                                            href="/programa"
-                                            className="block text-white hover:text-gray-300 transition-colors duration-300"
-                                        >
-                                            Programa
-                                        </Link>
-                                    </div>
-                                </div>
-
-                                {/* Mobile Autoridades Options */}
-                                <div className="px-3 py-2">
-                                    <div className="text-white font-medium mb-2">Autoridades</div>
-                                    <div className="ml-4 space-y-1">
-                                        <Link
-                                            href="/autoridades/comision-directiva"
-                                            className="block text-white hover:text-gray-300 transition-colors duration-300"
-                                        >
-                                            Comisión Directiva
-                                        </Link>
-                                        <Link
-                                            href="/autoridades/comite-organizador"
-                                            className="block text-white hover:text-gray-300 transition-colors duration-300"
-                                        >
-                                            Comité Organizador
-                                        </Link>
-                                    </div>
-                                </div>
-
-                                {/* Mobile Temas libres */}
-                                <div className="px-3 py-2">
-                                    <Button
-                                        variant="principal"
-                                        size="default"
-                                        className="w-full"
-                                        onClick={() => {
-                                            if (pathname === '/') {
-                                                // If on home page, scroll to temas libres section
-                                                const element = document.getElementById('temas-libres');
-                                                if (element) {
-                                                    element.scrollIntoView({ behavior: 'smooth' });
-                                                }
-                                            } else {
-                                                // If on other pages, navigate to home page with hash
-                                                router.push('/#temas-libres');
-                                            }
-                                            setIsMobileMenuOpen(false);
-                                        }}
-                                    >
-                                        Temas libres
-                                    </Button>
-                                </div>
                             </div>
                         </motion.div>
                     )}
