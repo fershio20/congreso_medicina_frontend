@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef, useMemo } from 'react';
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import {BACKEND_URL, URL_DOMAIN} from '@/lib/globalConstants';
+import {BACKEND_URL, URL_DOMAIN, URL_DOMAIN_IMG} from '@/lib/globalConstants';
 import useSWR from 'swr';
 import { fetcher } from '@/lib/swr';
 import type { HomeGeneralInterface } from '@/types/sections';
@@ -85,7 +85,7 @@ const MainNav: React.FC<MainNavProps> = ({ configuracion }) => {
         }
     );
 
-    console.log('Navigation Data:', navData);
+    // console.log('Navigation Data:', navData);
 
     // Normalized nav items: from API tree or fallback sections
     const navItems: NavItem[] = useMemo(() => {
@@ -274,13 +274,14 @@ const MainNav: React.FC<MainNavProps> = ({ configuracion }) => {
                     <div className="shrink-0">
                         <Link href="/" className="flex items-center">
                             <div className="bg-white rounded-full  transition-all duration-300">
+
                                 {(configuracion?.logo?.url || HomeGeneral?.logoCongreso) ? (
                                     <img
                                         src={
                                             configuracion?.logo?.url 
                                                 ? (configuracion.logo.url.startsWith('http') 
                                                     ? configuracion.logo.url 
-                                                    : BACKEND_URL + configuracion.logo.url)
+                                                    : URL_DOMAIN_IMG + configuracion.logo.url)
                                                 : HomeGeneral?.logoCongreso || '/logo-congreso-placeholder.png'
                                         }
                                         alt="Logo Congreso"
@@ -299,7 +300,7 @@ const MainNav: React.FC<MainNavProps> = ({ configuracion }) => {
                                             width: isScrolled ? '40px' : '60px'
                                         }}
                                     >
-                                        <span className="text-white font-bold text-lg">CPP</span>
+                                        <span className="text-white font-bold text-lg">CM</span>
                                     </div>
                                 )}
                             </div>

@@ -5,6 +5,8 @@ import {GetStaticProps} from "next";
 import {URL_DOMAIN, URL_DOMAIN_IMG} from "@/lib/globalConstants";
 import PageHeader from "@/components/global/PageHeader";
 import SEO from "@/components/SEO";
+import {fetchConfiguracion} from "@/lib/api";
+import type {ConfiguracionData} from "@/types/home";
 
 // Global SEO interface
 interface GlobalSEO {
@@ -81,11 +83,11 @@ interface Props {
     comisionPageData: ComisionPageData | null;
     globalSEO: GlobalSEO | null;
     logoUrl: string | null;
+    configuracion: ConfiguracionData | null;
 }
 
 /* ===== Helpers ===== */
-const ENDPOINT_PATH =
-    "/api/home-page?populate[ComiteOrganizadorSection][populate][Miembros][populate]=*";
+const COMISION_LIST = "/api/home-page?populate[ComisionSection][populate][Miembros][populate]=*";
 const COMISION_PAGE_ENDPOINT = "/api/comision-page?populate=*";
 
 /**
@@ -96,15 +98,15 @@ const COMISION_PAGE_ENDPOINT = "/api/comision-page?populate=*";
 interface StrapiResponse {
     data?: {
         attributes?: {
-            ComiteOrganizadorSection?: Comite[];
+            ComisionSection?: Comite[];
         };
-        ComiteOrganizadorSection?: Comite[];
+        ComisionSection?: Comite[];
     };
 }
 
 function extractComiteFromStrapi(json: StrapiResponse): Comite[] {
     const root = json?.data?.attributes ?? json?.data ?? {};
-    return root?.ComiteOrganizadorSection ?? [];
+    return root?.ComisionSection ?? [];
 }
 
 /* =========================================================
@@ -113,21 +115,22 @@ function extractComiteFromStrapi(json: StrapiResponse): Comite[] {
    - Revalida en background cada X segundos
    ========================================================= */
 export const getStaticProps: GetStaticProps<Props> = async () => {
-    const ENDPOINT = `${URL_DOMAIN}${ENDPOINT_PATH}`;
+    const COMISION_LIST_ENDPOINT = `${URL_DOMAIN}${COMISION_LIST}`;
     const COMISION_ENDPOINT = `${URL_DOMAIN}${COMISION_PAGE_ENDPOINT}`;
     const SEO_ENDPOINT = `${URL_DOMAIN}/api/seo-setting?populate=*`;
     const LOGO_ENDPOINT = `${URL_DOMAIN}/api/home-page?populate[HomeGeneral][populate]=*`;
 
     try {
-        // Fetch comite organizador data
-        const res = await fetch(ENDPOINT, {
-            headers: {Accept: "application/json"},
-        });
+        // Fetch comite organizador data and configuracion in parallel
+        const [res, configuracion] = await Promise.all([
+            fetch(COMISION_LIST_ENDPOINT, { headers: { Accept: "application/json" } }),
+            fetchConfiguracion()
+        ]);
 
         if (!res.ok) {
-            console.error("Comite organizador fetch failed:", res.status, ENDPOINT);
+            console.error("Comite organizador fetch failed:", res.status, COMISION_LIST_ENDPOINT);
             return {
-                props: {comite: [], comisionPageData: null, globalSEO: null, logoUrl: null},
+                props: { comite: [], comisionPageData: null, globalSEO: null, logoUrl: null, configuracion: configuracion ?? null },
                 revalidate: 60 * 10,
             };
         }
@@ -189,27 +192,28 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
                 comite,
                 comisionPageData: comisionPageData || null,
                 globalSEO: globalSEO || null,
-                logoUrl: logoUrl || null
+                logoUrl: logoUrl || null,
+                configuracion: configuracion ?? null
             },
             revalidate: 60 * 10,
         };
     } catch (err) {
         console.error("Error fetching comite organizador data:", err);
         return {
-            props: {comite: [], comisionPageData: null, globalSEO: null, logoUrl: null},
+            props: { comite: [], comisionPageData: null, globalSEO: null, logoUrl: null, configuracion: null },
             revalidate: 60 * 10,
         };
     }
 };
 
-export default function ComiteOrganizadorPage({comite, comisionPageData, globalSEO, logoUrl}: Props) {
+export default function ComiteOrganizadorPage({ comite, comisionPageData, globalSEO, logoUrl, configuracion }: Props) {
     // Determine the background image for PageHeader
     const backgroundImage = comisionPageData?.featured_image?.formats?.large?.url
         ? `${URL_DOMAIN_IMG}${comisionPageData.featured_image.formats.large.url}`
         : comisionPageData?.featured_image?.url
             ? `${URL_DOMAIN_IMG}${comisionPageData.featured_image.url}`
             : "/bg-default-blue.png";
-
+    console.log('CHECK DE COMITE', comite)
     return (
         <>
             <SEO
@@ -224,7 +228,7 @@ export default function ComiteOrganizadorPage({comite, comisionPageData, globalS
             />
 
             <div className="bg-white text-gray-800 space-y-12">
-                <MainNav/>
+                <MainNav configuracion={configuracion}/>
 
                 <PageHeader
                     title={comisionPageData?.title || "Comité Organizador 2025"}
@@ -334,7 +338,7 @@ export default function ComiteOrganizadorPage({comite, comisionPageData, globalS
                         )}
                     </div>
                 </section>
-                <Footer/>
+                <Footer configuracion={configuracion} />
             </div>
         </>
     );

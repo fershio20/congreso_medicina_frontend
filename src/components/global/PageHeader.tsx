@@ -21,7 +21,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({
     
     return (
         <div 
-            className={`bg-main-familiar pt-90 pb-5 relative ${className}`}
+            className={`bg-main-familiar pt-90 pb-5 mb-0 relative ${className}`}
             style={{
                 backgroundImage: `url("${backgroundImage}")`,
                 backgroundPosition: "center center",
