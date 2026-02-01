@@ -3,8 +3,9 @@ import Footer from "@/components/global/footer";
 import React from "react";
 import { GetStaticProps } from "next";
 import PageHeader from "@/components/global/PageHeader";
-import {URL_DOMAIN} from "@/lib/globalConstants";
+import { URL_DOMAIN } from "@/lib/globalConstants";
 import SEO from "@/components/SEO";
+import MiembrosGrid from "@/pages/autoridades/components/_MiembrosGrid";
 
 // Global SEO interface
 interface GlobalSEO {
@@ -236,67 +237,22 @@ export default function ComisionDirectivaPage({ comite, consejoDirectivoPageData
                     <div className="container max-w-[1280px] mx-auto px-4">
                         {comite.length > 0 ? (
                             (() => {
-                                // Check if at least one member across ALL sections has an avatar
-                                const hasAnyAvatarOnPage = comite.some(comiteSection => 
+                                const hasAnyAvatarOnPage = comite.some(comiteSection =>
                                     comiteSection.Miembros.some(miembro => miembro.avatar?.url)
                                 );
-                                
                                 return (
                                     <div className="space-y-12">
-                                        {comite.map((comiteSection) => (
-                                            comiteSection.Miembros.length > 0 && (
+                                        {comite.map((comiteSection) =>
+                                            comiteSection.Miembros.length > 0 ? (
                                                 <div key={comiteSection.id} className="mb-12">
-                                                    <div className="flex flex-wrap justify-center gap-4">
-                                                        {comiteSection.Miembros.map((miembro) => (
-                                                            <div key={miembro.id} className="bg-white border-b border-[#0F62A5] p-6 text-center w-full sm:w-[calc(50%-0.5rem)] lg:w-[calc(25%-0.75rem)]" style={{ borderBottomColor: 'rgba(15, 98, 165, 0.41)' }}>
-                                                                <div className={hasAnyAvatarOnPage ? "space-y-4" : "space-y-2"}>
-                                                                    {/* Avatar Image - only show if at least one member on the entire page has an avatar */}
-                                                                    {hasAnyAvatarOnPage && (
-                                                                        <div className="flex justify-center">
-                                                                            <div className="w-24 h-24 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center">
-                                                                                {miembro.avatar?.url ? (
-                                                                                    <img 
-                                                                                        src={`${URL_DOMAIN}${miembro.avatar.url}`}
-                                                                                        alt={miembro.nombre || miembro.NombreCompleto}
-                                                                                        className="w-full h-full object-cover"
-                                                                                        onError={(e) => {
-                                                                                            const target = e.target as HTMLImageElement;
-                                                                                            target.style.display = 'none';
-                                                                                            target.nextElementSibling?.classList.remove('hidden');
-                                                                                        }}
-                                                                                    />
-                                                                                ) : (
-                                                                                    <div className="w-full h-full bg-gray-300 flex items-center justify-center">
-                                                                                        <svg className="w-12 h-12 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                                                                                            <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
-                                                                                        </svg>
-                                                                                    </div>
-                                                                                )}
-                                                                                {/* Fallback icon (hidden by default, shown if image fails) */}
-                                                                                <div className="hidden w-full h-full bg-gray-300 flex items-center justify-center">
-                                                                                    <svg className="w-12 h-12 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                                                                                        <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
-                                                                                    </svg>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                    )}
-                                                                    {/* Member Info */}
-                                                                    <div className="space-y-2">
-                                                                        <p className="text-2xl font-normal text-[#1e2939]">
-                                                                            {miembro.nombre}
-                                                                        </p>
-                                                                        <p className="text-2xl font-bold text-[#1e2939]">
-                                                                            {miembro.Cargo || comiteSection.Seccion}
-                                                                        </p>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        ))}
-                                                    </div>
+                                                    <MiembrosGrid
+                                                        miembros={comiteSection.Miembros}
+                                                        hasAnyAvatarOnPage={hasAnyAvatarOnPage}
+                                                        cargoFallback={comiteSection.Seccion}
+                                                    />
                                                 </div>
-                                            )
-                                        ))}
+                                            ) : null
+                                        )}
                                     </div>
                                 );
                             })()

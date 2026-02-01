@@ -1,5 +1,5 @@
 import type { AppProps } from 'next/app';
-import { Geist, Geist_Mono, Inter, Rubik, Merriweather, Albert_Sans } from "next/font/google";
+import { Geist, Geist_Mono, Inter, Rubik, Merriweather, Albert_Sans, Mona_Sans, Hubot_Sans } from "next/font/google";
 import "../styles/globals.css";
 
 // Fonts configuration
@@ -41,11 +41,23 @@ const albertSans = Albert_Sans({
   display: "swap",
 });
 
+const monaSans = Mona_Sans({
+  subsets: ["latin"],
+  variable: "--font-mona-sans",
+  display: "swap",
+});
+
+const hubotSans = Hubot_Sans({
+  subsets: ["latin"],
+  variable: "--font-hubot-sans",
+  display: "swap",
+});
+
 export default function MyApp({ Component, pageProps }: AppProps) {
   return (
     <>
-      {/* Contenido de la aplicación */}
-      <div className={`${rubik.variable} ${inter.variable} ${geistSans.variable} ${geistMono.variable} ${merriweather.variable} ${albertSans.variable} antialiased`}>
+      {/* Contenido de la aplicación: font-body aplica Hubot Sans a todo el contenido */}
+      <div className={`${monaSans.variable} ${hubotSans.variable} ${rubik.variable} ${inter.variable} ${geistSans.variable} ${geistMono.variable} ${merriweather.variable} ${albertSans.variable} font-body antialiased min-h-screen`}>
         <Component {...pageProps} />
       </div>
 

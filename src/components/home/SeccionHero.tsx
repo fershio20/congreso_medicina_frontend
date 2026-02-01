@@ -155,12 +155,12 @@ export default function SeccionHero({ heroData, configuracion }: SeccionHeroProp
                 <div className="grid grid-cols-12 w-full gap-4">
 
                     <div className={' flex flex-col justify-center col-span-8'}>
-                        <h2 className={'text-left text-5xl uppercase'}>
+                        <h2 className={'text-left mb-2 '}>
                             <span
-                                    style={{
+                                    /*style={{
                                         color:configuracion?.color_main || 'inherit',
-                                    }}
-                                className={`text-4xl sm:text-3xl md:text-3xl font-bold`}>
+                                    }}*/
+                                className={` sm:text-3xl md:text-3xl lg:text-4xl font-black`}>
                                 {heroData.titulo}
                             </span>
                         </h2>

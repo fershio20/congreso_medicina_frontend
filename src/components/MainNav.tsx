@@ -279,10 +279,8 @@ const MainNav: React.FC<MainNavProps> = ({ configuracion }) => {
                                     <img
                                         src={
                                             configuracion?.logo?.url 
-                                                ? (configuracion.logo.url.startsWith('http') 
-                                                    ? configuracion.logo.url 
-                                                    : URL_DOMAIN_IMG + configuracion.logo.url)
-                                                : HomeGeneral?.logoCongreso || '/logo-congreso-placeholder.png'
+                                                ? URL_DOMAIN_IMG + configuracion.logo.url
+                                                : ''
                                         }
                                         alt="Logo Congreso"
                                         className="transition-all duration-300"

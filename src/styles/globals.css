@@ -45,16 +45,18 @@
 }
 
 @theme {
-  --font-heading: "Merriweather", serif;
-  --font-body: "Inter", sans-serif;
+  --font-heading: "Mona Sans", sans-serif;
+  --font-body: "Hubot Sans", sans-serif;
 }
 
+html,
 body {
+  font-family: var(--font-hubot-sans), sans-serif;
   font-size: 16px;
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-albert-sans), sans-serif;
+  font-family: var(--font-mona-sans), sans-serif;
 }
 /* Tipografías Golden Ratio */
 h1 {
@@ -150,7 +152,7 @@ h6 {
 
 /* Utility classes for Merriweather font */
 .font-title{
-  font-family: var(--font-merriweather), serif;
+  font-family: var(--font-hubot-sans), serif;
   font-weight: bold;
 }
 
@@ -159,22 +161,22 @@ h6 {
 }
 
 .font-heading-light {
-  font-family: var(--font-merriweather), serif;
+  font-family: var(--font-hubot-sans), serif;
   font-weight: 300;
 }
 
 .font-heading-regular {
-  font-family: var(--font-merriweather), serif;
+  font-family: var(--font-hubot-sans), serif;
   font-weight: 400;
 }
 
 .font-heading-bold {
-  font-family: var(--font-merriweather), serif;
+  font-family: var(--font-hubot-sans), serif;
   font-weight: 700;
 }
 
 .font-heading-black {
-  font-family: var(--font-merriweather), serif;
+  font-family: var(--font-hubot-sans), serif;
   font-weight: 900;
 }
 
@@ -254,8 +256,10 @@ h6 {
   * {
     @apply border-border outline-ring/50;
   }
+  html,
   body {
     @apply bg-background text-foreground;
+    font-family: var(--font-hubot-sans), sans-serif;
   }
 }
 

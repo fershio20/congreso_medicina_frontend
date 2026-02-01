@@ -20,7 +20,7 @@ const ThematicCard: React.FC<ThematicCardProps> = ({
 
     return (
         <div className="relative">
-            <div className="group relative w-full overflow-hidden sm:max-w-sm md:max-w-full p-6 pl-10 h-[230px] hover:cursor-pointer bg-[#fff] border border-gray-200 hover:border-2 hover:border-blue-800 rounded-lg transition-all ease-in-out hover:shadow-lg dark:bg-gray-800 dark:border-gray-700 gap-10">
+            <div className="group relative w-full overflow-hidden sm:max-w-sm md:max-w-full p-6 pl-10 h-[230px] hover:cursor-pointer bg-[#fff] border border-gray-200 hover:border-2 hover:border-gray-200 rounded-lg transition-all ease-in-out hover:shadow-lg dark:bg-gray-800 dark:border-gray-700 gap-10">
                 {/* Barra que se expande */}
                 {color && (
                     <div

@@ -7,12 +7,12 @@ const config = {
     theme: {
         extend: {
             fontFamily: {
-                heading: ['var(--font-merriweather)', 'serif'],
+                heading: ['var(--font-mona-sans)', 'sans-serif'],
                 'heading-light': ['var(--font-merriweather)', 'serif'],
                 'heading-regular': ['var(--font-merriweather)', 'serif'],
                 'heading-bold': ['var(--font-merriweather)', 'serif'],
                 'heading-black': ['var(--font-merriweather)', 'serif'],
-                body: ['var(--font-inter)', 'sans-serif'],
+                body: ['var(--font-hubot-sans)', 'sans-serif'],
             },
         },
     },
