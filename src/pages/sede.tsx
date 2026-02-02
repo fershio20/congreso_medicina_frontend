@@ -5,6 +5,13 @@ import DynamicHotelesSection from "@/components/hoteleria/DynamicHotelesSection"
 import Head from "next/head";
 import PageHeader from "@/components/global/PageHeader";
 import { useTurismoPage } from "@/lib/swr";
+import { fetchConfiguracion } from "@/lib/api";
+import type { ConfiguracionData } from "@/types/home";
+import { GetStaticProps } from "next";
+
+interface Props {
+    configuracion: ConfiguracionData | null;
+}
 
 interface TurismoPageData {
     id: number;
@@ -27,7 +34,15 @@ interface TurismoPageData {
     };
 }
 
-export default function SedePage() {
+export const getStaticProps: GetStaticProps<Props> = async () => {
+    const configuracion = await fetchConfiguracion();
+    return {
+        props: { configuracion: configuracion ?? null },
+        revalidate: 60,
+    };
+};
+
+export default function SedePage({ configuracion }: Props) {
     // Fetch turismo page data using SWR
     const { 
         data: turismoPageResult, 
@@ -49,7 +64,7 @@ export default function SedePage() {
                 <meta name="description" content="Información sobre la sede del congreso, hoteles y alojamiento para el Congreso de Pediatría." />
             </Head>
             <div className="bg-white text-gray-800 space-y-12">
-                <MainNav />
+                <MainNav configuracion={configuracion} />
                 
                 {turismoPageLoading ? (
                     <div className="flex justify-center items-center py-20">
@@ -86,7 +101,7 @@ export default function SedePage() {
                     </>
                 )}
                 
-                <Footer/>
+                <Footer configuracion={configuracion} />
             </div>
         </>
     );

@@ -31,7 +31,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
             logoUrl: logoUrl ?? null,
             configuracion: configuracion ?? null,
         },
-        revalidate: 60 * 10,
+        revalidate: 60,
     };
 };
 
