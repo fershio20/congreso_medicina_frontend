@@ -225,7 +225,7 @@ export default function SeccionHero({ heroData, configuracion }: SeccionHeroProp
             <div 
                 id='featuredCarrusel' 
                 ref={carouselRef}
-                className={'w-full absolute bottom-[-100px] h-[250px] z-20 overflow-hidden'}
+                className={'w-full absolute bottom-[-180px] h-[250px] z-20 overflow-hidden'}
             >
                 <div 
                     ref={carouselContentRef}
