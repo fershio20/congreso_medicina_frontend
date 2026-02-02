@@ -159,7 +159,7 @@ const DynamicHotelesSection: React.FC = () => {
         <div className="space-y-24">
             {/* La Sede - Featured Hotel */}
             <section>
-                <h2 className="text-4xl font-bold text-blue-900 mb-8">La Sede!</h2>
+                <h2 className="text-4xl font-bold text-blue-900 mb-8">La Sede</h2>
                 <FeaturedHotel 
                     name={turismoPageData.sede_hotel.title}
                     description={turismoPageData.sede_hotel.description}
