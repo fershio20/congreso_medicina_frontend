@@ -1,4 +1,5 @@
 import { URL_DOMAIN } from "./globalConstants";
+import { fetchServerSide } from "./utils";
 import {
     StrapiHeroResponse,
     StrapiSEOResponse,
@@ -10,38 +11,36 @@ import {
     StrapiHomeSection
 } from "@/types/home";
 import { ExpertData, RawExpertData } from "@/types/sections";
+import type {
+    PonenciaPageData,
+    StrapiPonenciaResponse,
+    TrabajoCientificoPageData,
+    StrapiTrabajoCientificoResponse,
+} from "@/lib/types";
+
+export { fetchServerSide } from "./utils";
+
+const PONENCIA_ENDPOINT = "/api/ponencia?populate[page_header][populate]=*&populate[seo][populate]=*";
+const TRABAJO_CIENTIFICO_ENDPOINT = "/api/trabajo-cientifico?populate=*";
 
 /**
- * Función genérica para hacer requests del lado del servidor
- * @param endpoint - Ruta del endpoint (sin el dominio base)
- * @returns Promise con la respuesta parseada como JSON o null si falla
+ * Fetches Convocatoria - Ponencia page data from Strapi
  */
-export async function fetchServerSide<T>(
-    endpoint: string
-): Promise<T | null> {
-    try {
-        const url = `${URL_DOMAIN}${endpoint}`;
-        const res = await fetch(url, {
-            headers: { Accept: "application/json" },
-        });
+export async function fetchPonenciaData(): Promise<PonenciaPageData | null> {
+    const json = await fetchServerSide<StrapiPonenciaResponse>(PONENCIA_ENDPOINT);
+    if (!json?.data) return null;
+    const attrs = json.data.attributes ?? json.data;
+    return (attrs as PonenciaPageData) ?? null;
+}
 
-        if (!res.ok) {
-            // Only log non-404 errors (404s are expected and handled gracefully)
-            if (res.status !== 404) {
-                console.error(`Fetch failed: ${res.status} ${res.statusText}`, url);
-            }
-            return null;
-        }
-
-        const json = await res.json();
-        return json as T;
-    } catch (error) {
-        // Only log network errors, not 404s
-        if (error instanceof Error && !error.message.includes('404')) {
-            console.error(`Error fetching ${endpoint}:`, error);
-        }
-        return null;
-    }
+/**
+ * Fetches Convocatoria - Trabajo Científico page data from Strapi
+ */
+export async function fetchTrabajoCientificoData(): Promise<TrabajoCientificoPageData | null> {
+    const json = await fetchServerSide<StrapiTrabajoCientificoResponse>(TRABAJO_CIENTIFICO_ENDPOINT);
+    if (!json?.data) return null;
+    const { content, page_header, seo } = json.data;
+    return { content, page_header, seo };
 }
 
 /**

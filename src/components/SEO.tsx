@@ -2,6 +2,7 @@ import React from 'react';
 import Head from 'next/head';
 import Script from 'next/script';
 import {URL_DOMAIN} from '@/lib/globalConstants';
+import type { PageSEO } from '@/lib/types';
 
 interface GlobalSEO {
     site_title: string;
@@ -20,20 +21,6 @@ interface GlobalSEO {
             thumbnail?: { url: string };
         };
     };
-}
-
-interface PageSEO {
-    meta_title: string;
-    meta_description: string;
-    meta_keywords?: string;
-    og_title?: string;
-    og_description?: string;
-    og_image?: { url: string };
-    og_type?: string;
-    twitter_card?: string;
-    canonical_url?: string;
-    no_index?: boolean;
-    structured_data?: Record<string, unknown>;
 }
 
 interface SEOProps {

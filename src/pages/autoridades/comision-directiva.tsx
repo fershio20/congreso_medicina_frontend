@@ -213,7 +213,7 @@ export default function ComisionDirectivaPage({ comite, consejoDirectivoPageData
 
     return (
         <>
-                         <SEO
+             <SEO
                  pageSEO={consejoDirectivoPageData?.SEO}
                  globalSEO={globalSEO}
                  pageTitle={consejoDirectivoPageData?.title || "Comisión Directiva SPP"}
