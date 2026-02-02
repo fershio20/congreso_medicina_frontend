@@ -4,23 +4,27 @@ import { useEffect, useRef } from 'react'
 import { gsap } from 'gsap'
 import Countdown from '@/components/Countdown'
 import {URL_DOMAIN, URL_DOMAIN_IMG} from "@/lib/globalConstants";
-import type { ConfiguracionData } from "@/types/home";
-
-interface HomeSectionData {
-    titulo: string
-    descripcion: string
-    destacado: {
-        url: string
-    },
-    imgBackground?: string
-    proximaEdicionTitle: string
-    fecha: string
-    subtitulo?: string
-}
+import type { ConfiguracionData, HomeSectionData, HeroButton } from "@/types/home";
 
 interface SeccionHeroProps {
     heroData: HomeSectionData | null;
     configuracion?: ConfiguracionData | null;
+}
+
+const DEFAULT_BUTTONS: HeroButton[] = [
+    { label: "Conocer más", target: "#conocer-mas" },
+];
+
+function getButtonClassName(button: HeroButton, configuracion?: ConfiguracionData | null): string {
+    const base = "inline-block px-6 py-3 text-base transition-colors";
+    const variant = (button.variant || "secondary").toLowerCase();
+    if (variant === "primary" || variant === "principal") {
+        return `${base} text-white hover:opacity-90`;
+    }
+    if (variant === "outline") {
+        return `${base} border-2 border-current bg-transparent hover:bg-white/10`;
+    }
+    return `${base} bg-secondary text-white hover:bg-purple-800`;
 }
 
 export default function SeccionHero({ heroData, configuracion }: SeccionHeroProps) {
@@ -92,11 +96,21 @@ export default function SeccionHero({ heroData, configuracion }: SeccionHeroProp
                                 alt="Hero Illustration"
                                 className="mx-auto w-[200px] sm:w-[250px]"
                             />
-                            <div className={'mb-50'}>
-                                <a href="#conocer-mas"
-                                   className="inline-block bg-secondary text-white px-6 py-3  text-base hover:bg-purple-800">
-                                    Conocer más
-                                </a>
+                            <div className="mb-50 flex flex-wrap gap-4 justify-center">
+                                {DEFAULT_BUTTONS.map((btn, i) => (
+                                    <a
+                                        key={i}
+                                        href={btn.target}
+                                        className={getButtonClassName(btn, configuracion)}
+                                        style={
+                                            configuracion?.color_main && btn.variant?.toLowerCase() !== "outline"
+                                                ? { background: configuracion.color_main }
+                                                : undefined
+                                        }
+                                    >
+                                        {btn.label}
+                                    </a>
+                                ))}
                             </div>
                         </div>
                     </div>
@@ -115,10 +129,10 @@ export default function SeccionHero({ heroData, configuracion }: SeccionHeroProp
             id="inicio"
             className={`${heroData.imgBackground ? '' : 'bg-main-familiar'} min-h-dvh flex items-center relative `}
             style={{
-                backgroundImage: heroData.imgBackground ? `url(${heroData.imgBackground})` : '',
-                backgroundSize: heroData.imgBackground && `cover`,
-                backgroundPosition: heroData.imgBackground && `center center`,
-                backgroundRepeat: heroData.imgBackground && `no-repeat`,
+                backgroundImage: heroData.imgBackground ? `url(${heroData.imgBackground})` : undefined,
+                backgroundSize: heroData.imgBackground ? "cover" : undefined,
+                backgroundPosition: heroData.imgBackground ? "center center" : undefined,
+                backgroundRepeat: heroData.imgBackground ? "no-repeat" : undefined,
             }}
         >
             <div
@@ -175,14 +189,21 @@ export default function SeccionHero({ heroData, configuracion }: SeccionHeroProp
                         >
                             {heroData.descripcion}
                         </p>
-                        <div className={''}>
-                            <a href="#conocer-mas"
-                               style={{
-                                   background: configuracion?.color_main || 'inherit'
-                               }}
-                               className="inline-block bg-secondary text-white px-6 py-3  text-base hover:bg-purple-800">
-                                Conocer más
-                            </a>
+                        <div className="flex flex-wrap gap-4">
+                            {(heroData.buttons?.length ? heroData.buttons : DEFAULT_BUTTONS).map((btn, i) => (
+                                <a
+                                    key={i}
+                                    href={btn.target}
+                                    className={getButtonClassName(btn, configuracion)}
+                                    style={
+                                        configuracion?.color_main && btn.variant?.toLowerCase() !== "outline"
+                                            ? { background: configuracion.color_main }
+                                            : undefined
+                                    }
+                                >
+                                    {btn.label}
+                                </a>
+                            ))}
                         </div>
                     </div>
                     <div className={'col-span-4'}>

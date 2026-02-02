@@ -46,23 +46,38 @@ export async function fetchTrabajoCientificoData(): Promise<TrabajoCientificoPag
 /**
  * Normaliza datos del hero de Strapi
  */
+function extractHeroButtons(buttons: StrapiHomeSection["buttons"]): HomeSectionData["buttons"] {
+    if (!buttons || !Array.isArray(buttons)) return null;
+    return buttons
+        .filter((b) => b?.label)
+        .map((b) => ({
+            label: b.label || "",
+            target: b.target || "#",
+            variant: b.variant,
+            style: b.style,
+            icon_button: b.icon_button,
+        }));
+}
+
 function extractHeroFromStrapi(json: StrapiHeroResponse): HomeSectionData | null {
     const root = json?.data?.attributes ?? json?.data ?? {};
     const section: StrapiHomeSection | undefined = root?.HomeSection;
-
     if (!section) return null;
 
     return {
         habilitado: section.habilitado ?? true,
-        titulo: section.titulo || '',
-        descripcion: section.descripcion || '',
-        subtitulo: section?.sub_titulo || '',
+        titulo: section.titulo || "",
+        descripcion: section.descripcion || "",
+        subtitulo: section?.sub_titulo || "",
         destacado: {
-            url: section.destacado?.url || ''
+            url: section.destacado?.url || "",
         },
-        proximaEdicionTitle: section.ProximaEdicion || '',
-        fecha: section.FechaEvento || '',
-        imgBackground: section.imageBackground?.url ? `${URL_DOMAIN}${section.imageBackground.url}` : ''
+        proximaEdicionTitle: section.ProximaEdicion || "",
+        fecha: section.FechaEvento || "",
+        imgBackground: section.imageBackground?.url
+            ? `${URL_DOMAIN}${section.imageBackground.url}`
+            : null,
+        buttons: extractHeroButtons(section.buttons) ?? null,
     };
 }
 
@@ -75,7 +90,6 @@ export async function fetchHeroData(): Promise<HomeSectionData | null> {
     );
     
     if (!json) return null;
-    console.log('json data', json)
     return extractHeroFromStrapi(json);
 }
 

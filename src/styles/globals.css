@@ -49,6 +49,10 @@
   --font-body: "Hubot Sans", sans-serif;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 html,
 body {
   font-family: var(--font-hubot-sans), sans-serif;

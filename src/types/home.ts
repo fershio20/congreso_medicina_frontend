@@ -18,6 +18,15 @@ export interface GlobalSEO {
     };
 }
 
+/** Hero button from CMS (repeatable component) */
+export interface HeroButton {
+    label: string;
+    target: string;
+    variant?: string;
+    style?: string;
+    icon_button?: string;
+}
+
 export interface HomeSectionData {
     habilitado: boolean;
     titulo: string;
@@ -25,10 +34,11 @@ export interface HomeSectionData {
     destacado: {
         url: string;
     };
-    imgBackground?: string;
+    imgBackground?: string | null;
     proximaEdicionTitle: string;
     fecha: string;
     subtitulo?: string;
+    buttons?: HeroButton[] | null;
 }
 
 export interface HomePageProps {
@@ -36,6 +46,14 @@ export interface HomePageProps {
     globalSEO: GlobalSEO | null;
     logoUrl: string | null;
     configuracion: ConfiguracionData | null;
+}
+
+export interface StrapiHeroButton {
+    label?: string;
+    target?: string;
+    variant?: string;
+    style?: string;
+    icon_button?: string;
 }
 
 export interface StrapiHomeSection {
@@ -47,6 +65,7 @@ export interface StrapiHomeSection {
     ProximaEdicion?: string;
     FechaEvento?: string;
     imageBackground?: { url?: string };
+    buttons?: StrapiHeroButton[];
 }
 
 export interface StrapiHeroResponse {
