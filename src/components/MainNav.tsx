@@ -421,7 +421,7 @@ const MainNav: React.FC<MainNavProps> = ({ configuracion }) => {
                     <div className="md:hidden">
                         <button
                             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                            className="text-white hover:text-gray-300 focus:outline-none focus:text-gray-300"
+                            className="flex items-center justify-center w-10 h-10 rounded-full bg-gray-800/60 text-white hover:bg-gray-800/80 hover:text-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-600 focus:ring-offset-2 transition-colors"
                         >
                             <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 {isMobileMenuOpen ? (
