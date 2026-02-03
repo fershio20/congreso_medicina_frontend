@@ -168,15 +168,11 @@ export default function SeccionHero({ heroData, configuracion }: SeccionHeroProp
 
                 <div className="grid grid-cols-12 w-full gap-4">
 
-                    <div className={' flex flex-col justify-center col-span-8'}>
-                        <h2 className={'text-left mb-2 '}>
-                            <span
-                                    /*style={{
-                                        color:configuracion?.color_main || 'inherit',
-                                    }}*/
-                                className={` sm:text-3xl md:text-3xl lg:text-4xl font-black`}>
+                    <div className={' flex flex-col justify-center col-span-12 md:col-span-8 mt-20 md:mt-auto'}>
+                        <h2 className={'text-left mb-2 !text-4xl md:text-3xl lg:text-4xl font-black '}>
+
                                 {heroData.titulo}
-                            </span>
+
                         </h2>
                         {heroData.subtitulo && (
                         <div dangerouslySetInnerHTML={{ __html: heroData.subtitulo }}></div>
@@ -206,14 +202,14 @@ export default function SeccionHero({ heroData, configuracion }: SeccionHeroProp
                             ))}
                         </div>
                     </div>
-                    <div className={'col-span-4'}>
+                    <div className={'col-span-12 md:col-span-4'}>
 
                         {heroData.destacado.url && (
                             <>
                                 <img
                                     src={`${URL_DOMAIN_IMG}${heroData.destacado.url}`}
                                     alt="Hero Illustration 1"
-                                    className="w-full mx-auto"
+                                    className="w-full mx-auto hidden md:block"
                                 />
                             </>
                         )}
@@ -225,7 +221,7 @@ export default function SeccionHero({ heroData, configuracion }: SeccionHeroProp
             <div 
                 id='featuredCarrusel' 
                 ref={carouselRef}
-                className={'w-full absolute bottom-[-180px] h-[250px] z-20 overflow-hidden'}
+                className={'w-full absolute bottom-[-230px] md:bottom-[-180px] h-[250px] z-20 overflow-hidden'}
             >
                 <div 
                     ref={carouselContentRef}

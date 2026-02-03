@@ -59,7 +59,7 @@ const ThematicSection: React.FC<ThematicSectionProps> = ({ configuracion }) => {
         <section id="ejes" className="bg-white">
             <div className="container max-w-[1280px] mx-auto px-4 pt-50 pb-52 grid grid-cols-12 items-start relative">
 
-                <div className="col-span-5  h-full">
+                <div className="col-span-12 md:col-span-5  h-full">
                     <div className="sticky top-[100px]">
                         <h2
                             className="text-4xl md:text-5xl font-heading font-bold mb-12"
@@ -70,7 +70,7 @@ const ThematicSection: React.FC<ThematicSectionProps> = ({ configuracion }) => {
                     </div>
                 </div>
 
-                <div className={'col-span-7'}>
+                <div className={'col-span-12 md:col-span-7'}>
                     {data.EjesTematicosSection && data.EjesTematicosSection.map((section, index) => (
                         <div key={index} className="">
                             <h3
@@ -81,7 +81,7 @@ const ThematicSection: React.FC<ThematicSectionProps> = ({ configuracion }) => {
                             >
                                 {section.SubTitulo}
                             </h3>
-                            <div className="flex flex-col gap-4">
+                            <div className="flex flex-col gap-4 w-90 sm:w-auto">
                                 {section.EjesTematicos.map((item) => (
                                     <div key={item.id} className="">
 

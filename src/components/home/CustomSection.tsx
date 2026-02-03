@@ -131,11 +131,11 @@ const CustomSection: React.FC<CustomSectionProps> = ({
 
         if (config.href) {
             return (
-                <Link href={config.href}>
+                <Link href={config.href} className={'w-100'}>
                     <Button 
                         size={size} 
                         variant={variant}
-                        className="flex items-center cursor-pointer"
+                        className="flex items-center cursor-pointer w-100"
                     >
                         {buttonContent()}
                     </Button>
@@ -171,7 +171,7 @@ const CustomSection: React.FC<CustomSectionProps> = ({
 
     const ContentSection = () => (
         <div className="w-full lg:w-1/2 p-4 sm:p-6 lg:p-8 xl:p-12 flex flex-col justify-center bg-blue-50 ">
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-heading font-bold text-[var(--secondary-color)] mb-4 sm:mb-6 leading-tight">
+            <h2 className="!text-4xl md:text-5xl font-heading font-bold  mb-4 sm:mb-6 leading-tight">
                 {Title}
             </h2>
             
@@ -239,21 +239,21 @@ const CustomSection: React.FC<CustomSectionProps> = ({
             <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
                 {/* Secondary Button (Left) */}
                 {secondaryButton && secondaryButton.position === 'left' && (
-                    <div>
+                    <>
                         {renderButton(secondaryButton, 'outline', 'lg')}
-                    </div>
+                    </>
                 )}
                 
                 {/* Main Button */}
-                <div>
+                <>
                     {renderButton(finalPrimaryButton, 'principal', 'lg')}
-                </div>
+                </>
                 
                 {/* Secondary Button (Right) */}
                 {secondaryButton && secondaryButton.position === 'right' && (
-                    <div>
+                    <>
                         {renderButton(secondaryButton, 'outline', 'lg')}
-                    </div>
+                    </>
                 )}
             </div>
         </div>
