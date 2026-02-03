@@ -1,8 +1,66 @@
 'use client'
+import { useRef, useState } from "react";
 import useSWR from "swr";
 import { URL_DOMAIN, URL_DOMAIN_IMG } from "@/lib/globalConstants";
 import { fetcher } from "@/lib/swr";
 import type { ConfiguracionData } from "@/types/home";
+
+function VideoWithPlayButton({
+    src,
+    poster,
+    className,
+}: {
+    src: string;
+    poster: string;
+    className?: string;
+}) {
+    const videoRef = useRef<HTMLVideoElement>(null);
+    const [isPlaying, setIsPlaying] = useState(false);
+
+    const handlePlayClick = () => {
+        videoRef.current?.play();
+        setIsPlaying(true);
+    };
+
+    const handlePause = () => setIsPlaying(false);
+    const handleEnded = () => setIsPlaying(false);
+
+    return (
+        <div className={`relative group cursor-pointer ${className}`} onClick={!isPlaying ? handlePlayClick : undefined}>
+            <video
+                ref={videoRef}
+                src={src}
+                poster={poster}
+                controls={isPlaying}
+                controlsList="nodownload nofullscreen noremoteplayback"
+                disablePictureInPicture
+                disableRemotePlayback
+                className="intro-video w-full h-full max-h-[450px] object-cover block"
+                playsInline
+                onPlay={() => setIsPlaying(true)}
+                onPause={handlePause}
+                onEnded={handleEnded}
+                onClick={(e) => isPlaying && e.stopPropagation()}
+            />
+            {!isPlaying && (
+                <div
+                    className="absolute inset-0 flex items-center justify-center bg-black/20 transition-opacity hover:bg-black/30"
+                    aria-hidden
+                >
+                    <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-black/60 flex items-center justify-center shadow-lg hover:bg-black/70 hover:scale-110 transition-transform">
+                        <svg
+                            className="w-8 h-8 md:w-10 md:h-10 text-white ml-1"
+                            viewBox="0 0 24 24"
+                            fill="currentColor"
+                        >
+                            <path d="M8 5v14l11-7z" />
+                        </svg>
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+}
 
 interface HomeGeneralInterface {
     titulo: string
@@ -18,6 +76,8 @@ interface IntroSectionProps {
 }
 
 const INTRO_KEY = `${URL_DOMAIN}/api/home-page?populate[IntroSectionHome][populate]=*`;
+
+const VIDEO_POSTER = "https://congreso-backend-sbecd.ondigitalocean.app/uploads/bannerconbreso2026_452a24031c.png";
 
 function toHomeGeneral(data: unknown): HomeGeneralInterface | null {
     const section = (data as { data?: { IntroSectionHome?: {
@@ -77,6 +137,8 @@ export default function IntroSection({ configuracion }: IntroSectionProps) {
                 .intro-video::-webkit-media-controls-timeline { display: none !important; }
                 .intro-video::-webkit-media-controls-current-time-display { display: none !important; }
                 .intro-video::-webkit-media-controls-time-remaining-display { display: none !important; }
+                .intro-video::-webkit-media-controls-overflow-button { display: none !important; }
+                .intro-video::-webkit-media-controls-enclosure { overflow: hidden !important; }
             `}</style>
             <section id='intro' className="py-[100px] bg-white">
                 <div className="container max-w-[1280px] mx-auto px-4">
@@ -94,11 +156,10 @@ export default function IntroSection({ configuracion }: IntroSectionProps) {
                             {(HomeGeneral?.videoUrl || HomeGeneral?.logoCongreso) && (
                                 <div className="rounded-lg border border-gray-200 overflow-hidden mx-auto w-full max-w-2xl">
                                     {HomeGeneral.videoUrl ? (
-                                        <video
+                                        <VideoWithPlayButton
                                             src={HomeGeneral.videoUrl}
-                                            controls
-                                            className="intro-video w-full h-full max-h-[450px] object-cover"
-                                            playsInline
+                                            poster={VIDEO_POSTER}
+                                            className="w-full"
                                         />
                                     ) : (
                                         /* eslint-disable-next-line @next/next/no-img-element */
@@ -116,11 +177,10 @@ export default function IntroSection({ configuracion }: IntroSectionProps) {
                                 <div className={`col-span-1 ${layout}`}>
                                     <div className="rounded-lg border border-gray-200 overflow-hidden">
                                         {HomeGeneral.videoUrl ? (
-                                            <video
+                                            <VideoWithPlayButton
                                                 src={HomeGeneral.videoUrl}
-                                                controls
-                                                className="intro-video mx-auto rounded-lg w-full h-full max-h-[450px] object-cover"
-                                                playsInline
+                                                poster={VIDEO_POSTER}
+                                                className="mx-auto rounded-lg w-full"
                                             />
                                         ) : (
                                             /* eslint-disable-next-line @next/next/no-img-element */
