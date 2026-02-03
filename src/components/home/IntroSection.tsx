@@ -10,6 +10,7 @@ interface HomeGeneralInterface {
     description: string
     layout: 'centrado' | 'imagen_derecha'  | 'imagen_izquierda'
     logoCongreso?: string
+    videoUrl?: string
 }
 
 interface IntroSectionProps {
@@ -24,19 +25,37 @@ function toHomeGeneral(data: unknown): HomeGeneralInterface | null {
                 description: string;
                 Titulo?: string;
                 DescripcionBody?: string;
-                ImagenDestacada?: {
-                    url?: string
-                }
+                ImagenDestacada?: { url?: string; mime?: string; mimeType?: string };
+                VideoDestacado?: { url?: string };
     } } })?.data?.IntroSectionHome;
 
     if (!section) return null;
+
+    const baseUrl = URL_DOMAIN_IMG || URL_DOMAIN;
+    const media = section.ImagenDestacada;
+    const videoField = section.VideoDestacado;
+
+    const isVideo = (m: { mime?: string; mimeType?: string } | undefined) =>
+        Boolean(m?.mime?.startsWith?.('video/') || m?.mimeType?.startsWith?.('video/'));
+
+    let logoCongreso: string | undefined;
+    let videoUrl: string | undefined;
+
+    if (videoField?.url) {
+        videoUrl = baseUrl + videoField.url;
+    } else if (media?.url && isVideo(media)) {
+        videoUrl = baseUrl + media.url;
+    } else if (media?.url) {
+        logoCongreso = baseUrl + media.url;
+    }
 
     return {
         titulo: section.Titulo ?? '',
         DescripcionBody: section.DescripcionBody ?? '',
         description: section.description ?? '',
         layout: section.layout ?? '',
-        logoCongreso: section.ImagenDestacada?.url ? URL_DOMAIN_IMG + section.ImagenDestacada.url : ''
+        logoCongreso,
+        videoUrl
     };
 }
 
@@ -54,6 +73,11 @@ export default function IntroSection({ configuracion }: IntroSectionProps) {
 
     return (
         <>
+            <style jsx global>{`
+                .intro-video::-webkit-media-controls-timeline { display: none !important; }
+                .intro-video::-webkit-media-controls-current-time-display { display: none !important; }
+                .intro-video::-webkit-media-controls-time-remaining-display { display: none !important; }
+            `}</style>
             <section id='intro' className="py-[100px] bg-white">
                 <div className="container max-w-[1280px] mx-auto px-4">
 
@@ -67,10 +91,19 @@ export default function IntroSection({ configuracion }: IntroSectionProps) {
                             >
                                 {HomeGeneral?.titulo && HomeGeneral?.titulo}
                             </h2>
-                            {HomeGeneral?.logoCongreso && (
-                                <div className="rounded-lg border border-gray-200 overflow-hidden mx-auto w-full">
-                                    {/* eslint-disable-next-line @next/next/no-img-element*/}
-                                    <img src={HomeGeneral.logoCongreso} alt="" className="w-full h-full max-h-[450px] object-cover" />
+                            {(HomeGeneral?.videoUrl || HomeGeneral?.logoCongreso) && (
+                                <div className="rounded-lg border border-gray-200 overflow-hidden mx-auto w-full max-w-2xl">
+                                    {HomeGeneral.videoUrl ? (
+                                        <video
+                                            src={HomeGeneral.videoUrl}
+                                            controls
+                                            className="intro-video w-full h-full max-h-[450px] object-cover"
+                                            playsInline
+                                        />
+                                    ) : (
+                                        /* eslint-disable-next-line @next/next/no-img-element */
+                                        <img src={HomeGeneral.logoCongreso} alt="" className="w-full h-full max-h-[450px] object-cover" />
+                                    )}
                                 </div>
                             )}
                             {HomeGeneral?.description && (
@@ -79,11 +112,20 @@ export default function IntroSection({ configuracion }: IntroSectionProps) {
                         </div>
                     ) : (
                         <div className={'grid grid-cols-2 gap-10'}>
-                            {HomeGeneral?.logoCongreso && (
+                            {(HomeGeneral?.videoUrl || HomeGeneral?.logoCongreso) && (
                                 <div className={`col-span-1 ${layout}`}>
-                                    {/* eslint-disable-next-line @next/next/no-img-element*/}
-                                    <div className={'rounded-lg border border-gray-200  overflow-hidden '}>
-                                        <img src={`${HomeGeneral.logoCongreso}`} alt="" className="mx-auto rounded-lg w-full h-full max-h-[450px] object-cover" />
+                                    <div className="rounded-lg border border-gray-200 overflow-hidden">
+                                        {HomeGeneral.videoUrl ? (
+                                            <video
+                                                src={HomeGeneral.videoUrl}
+                                                controls
+                                                className="intro-video mx-auto rounded-lg w-full h-full max-h-[450px] object-cover"
+                                                playsInline
+                                            />
+                                        ) : (
+                                            /* eslint-disable-next-line @next/next/no-img-element */
+                                            <img src={HomeGeneral.logoCongreso} alt="" className="mx-auto rounded-lg w-full h-full max-h-[450px] object-cover" />
+                                        )}
                                     </div>
                                 </div>
                             )}
