@@ -35,6 +35,7 @@ interface ThematicSectionProps {
 
 const ThematicSection: React.FC<ThematicSectionProps> = ({ configuracion }) => {
     const [data, setData] = useState<ThematicData | null>(null);
+    const [expandedCardId, setExpandedCardId] = useState<number | null>(null);
 
     useEffect(() => {
         const url = `${URL_DOMAIN}/api/home-page?populate[EjesTematicosSection][populate][EjesTematicos][populate]=*`;
@@ -81,9 +82,9 @@ const ThematicSection: React.FC<ThematicSectionProps> = ({ configuracion }) => {
                             >
                                 {section.SubTitulo}
                             </h3>
-                            <div className="flex flex-col gap-4 w-90 sm:w-auto">
+                            <div className="flex flex-col gap-4 w-full sm:w-auto">
                                 {section.EjesTematicos.map((item) => (
-                                    <div key={item.id} className="">
+                                    <div key={item.id} className="card-ejes">
 
                                         <ThematicCard
                                             title={item.Titulo}
@@ -91,6 +92,8 @@ const ThematicSection: React.FC<ThematicSectionProps> = ({ configuracion }) => {
                                             main_color={configuracion?.color_main || ''}
                                             iconImg={item.ImagenDestacada?.url ? URL_DOMAIN + item.ImagenDestacada.url : ""}
                                             color={item.color? item.color : ''}
+                                            isExpanded={expandedCardId === item.id}
+                                            onExpand={() => setExpandedCardId(prev => prev === item.id ? null : item.id)}
                                         />
                                     </div>
                                 ))}
