@@ -11,6 +11,10 @@ export interface NavigationTreeItem {
   uiRouterKey: string;
   slug?: string;
   external: boolean;
+  additionalFields?: {
+    featured_item?: boolean;
+    [key: string]: unknown;
+  };
   related?: Record<string, unknown>;
   items?: NavigationTreeItem[];
 }

@@ -28,6 +28,7 @@ interface NavItem {
     label: string;
     path: string;
     external: boolean;
+    featured?: boolean;
     items?: NavItem[];
 }
 
@@ -42,6 +43,7 @@ function treeItemToNavItem(item: NavigationTreeItem, index: number): NavItem {
         label: item.title,
         path: item.path || '#',
         external: item.external ?? item.type === 'EXTERNAL',
+        featured: Boolean(item.additionalFields?.featured_item),
         items: item.items?.length ? item.items.map((child, i) => treeItemToNavItem(child, i)) : undefined,
     };
 }
@@ -64,6 +66,9 @@ const MainNav: React.FC<MainNavProps> = ({ configuracion }) => {
     const [activeSection, setActiveSection] = useState('inicio');
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [borderStyle, setBorderStyle] = useState({ x: 0, width: 0 });
+    const baseNavTextColor = configuracion?.main_navigation?.dark_mode
+        ? '#FFF'
+        : (configuracion?.color_main ? configuracion?.color_main : '#333');
 
     // Fallback sections when navigation API is not used
     const fallbackSections: Section[] = useMemo(() => [
@@ -318,7 +323,7 @@ const MainNav: React.FC<MainNavProps> = ({ configuracion }) => {
                                                 onMouseEnter={() => setHoveredSection(item.id)}
                                                 onMouseLeave={() => setHoveredSection(null)}
                                                 style={{
-                                                    color: configuracion?.main_navigation?.dark_mode ? '#FFF' : (configuracion?.color_main ? configuracion?.color_main : '#333'),
+                                                    color: baseNavTextColor,
                                                 }}
                                             >
                                                 {item.label}
@@ -370,11 +375,12 @@ const MainNav: React.FC<MainNavProps> = ({ configuracion }) => {
                                                 href={item.path}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
-                                                className="h-full px-6 text-sm font-medium hover:cursor-pointer transition-all duration-300 hover:text-white flex items-center justify-center"
+                                                className={`h-full px-6 text-sm font-medium hover:cursor-pointer transition-all duration-300 flex items-center justify-center ${item.featured ? 'h-auto' : 'hover:text-white'}`}
                                                 onMouseEnter={() => setHoveredSection(item.id)}
                                                 onMouseLeave={() => setHoveredSection(null)}
                                                 style={{
-                                                    color: configuracion?.main_navigation?.dark_mode ? '#FFF' : (configuracion?.color_main ? configuracion?.color_main : '#333'),
+                                                    color: item.featured ? '#FFF' : baseNavTextColor,
+                                                    backgroundColor: item.featured ? baseNavTextColor : 'transparent',
                                                 }}
                                             >
                                                 {item.label}
@@ -382,12 +388,13 @@ const MainNav: React.FC<MainNavProps> = ({ configuracion }) => {
                                         ) : (
                                             <button
                                                 ref={(el) => { menuRefs.current[item.id] = el; }}
-                                                className="h-full px-6 text-sm font-medium hover:cursor-pointer transition-all duration-300 hover:text-white flex items-center justify-center"
+                                                className={`h-full px-6 text-sm font-medium hover:cursor-pointer transition-all duration-300 flex items-center justify-center ${item.featured ? 'h-auto' : 'hover:text-white'}`}
                                                 onMouseEnter={() => setHoveredSection(item.id)}
                                                 onMouseLeave={() => setHoveredSection(null)}
                                                 onClick={() => handleNavClick(item)}
                                                 style={{
-                                                    color: configuracion?.main_navigation?.dark_mode ? '#FFF' : (configuracion?.color_main ? configuracion?.color_main : '#333'),
+                                                    color: item.featured ? '#FFF' : baseNavTextColor,
+                                                    backgroundColor: item.featured ? baseNavTextColor : 'transparent',
                                                 }}
                                             >
                                                 {item.label}
@@ -481,14 +488,20 @@ const MainNav: React.FC<MainNavProps> = ({ configuracion }) => {
                                                 href={item.path}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
-                                                className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-white hover:bg-[#045084] transition-colors duration-300"
+                                                className={`block w-full text-left px-3 py-2 rounded-md text-base font-medium text-white transition-colors duration-300 ${item.featured ? '' : 'hover:bg-[#045084]'}`}
+                                                style={{
+                                                    backgroundColor: item.featured ? baseNavTextColor : 'transparent',
+                                                }}
                                                 onClick={() => setIsMobileMenuOpen(false)}
                                             >
                                                 {item.label}
                                             </a>
                                         ) : (
                                             <button
-                                                className={`block w-full text-left px-3 py-2 rounded-md text-base font-medium text-white hover:bg-[#045084] transition-colors duration-300 ${activeSection === item.id ? 'bg-[#045084]' : ''}`}
+                                                className={`block w-full text-left px-3 py-2 rounded-md text-base font-medium text-white transition-colors duration-300 ${item.featured ? '' : 'hover:bg-[#045084]'} ${activeSection === item.id && !item.featured ? 'bg-[#045084]' : ''}`}
+                                                style={{
+                                                    backgroundColor: item.featured ? baseNavTextColor : undefined,
+                                                }}
                                                 onClick={() => handleNavClick(item)}
                                             >
                                                 {item.label}
