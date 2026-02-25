@@ -22,15 +22,31 @@ export { fetchServerSide } from "./utils";
 
 const PONENCIA_ENDPOINT = "/api/ponencia?populate[page_header][populate]=*&populate[seo][populate]=*";
 const TRABAJO_CIENTIFICO_ENDPOINT = "/api/trabajo-cientifico?populate=*";
+const WAYNAKAY_ENDPOINT = "/api/waynakay?populate[page_header][populate]=*&populate[seo][populate]=*";
+
+/**
+ * Generic fetch for Strapi single types with page_header, content, seo
+ * (Convocatoria - Ponencia, Convocatoria - Waynakay, etc.)
+ */
+export async function fetchConvocatoriaSingleData(endpoint: string): Promise<PonenciaPageData | null> {
+    const json = await fetchServerSide<StrapiPonenciaResponse>(endpoint);
+    if (!json?.data) return null;
+    const attrs = json.data.attributes ?? json.data;
+    return (attrs as PonenciaPageData) ?? null;
+}
 
 /**
  * Fetches Convocatoria - Ponencia page data from Strapi
  */
 export async function fetchPonenciaData(): Promise<PonenciaPageData | null> {
-    const json = await fetchServerSide<StrapiPonenciaResponse>(PONENCIA_ENDPOINT);
-    if (!json?.data) return null;
-    const attrs = json.data.attributes ?? json.data;
-    return (attrs as PonenciaPageData) ?? null;
+    return fetchConvocatoriaSingleData(PONENCIA_ENDPOINT);
+}
+
+/**
+ * Fetches Convocatoria - Waynakay page data from Strapi (single type waynakay)
+ */
+export async function fetchWaynakayData(): Promise<PonenciaPageData | null> {
+    return fetchConvocatoriaSingleData(WAYNAKAY_ENDPOINT);
 }
 
 /**
@@ -227,4 +243,3 @@ export async function fetchExperts(): Promise<ExpertData[]> {
     
     return expertsData;
 }
-

@@ -15,6 +15,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 const CONVOCATORIAS_PATHS = [
   "/convocatorias/ponencias",
   "/convocatorias/trabajos-cientificos",
+  "/convocatorias/waynakay",
 ];
 
 export default async function handler(
