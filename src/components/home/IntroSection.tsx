@@ -77,7 +77,7 @@ interface IntroSectionProps {
 
 const INTRO_KEY = `${URL_DOMAIN}/api/home-page?populate[IntroSectionHome][populate]=*`;
 
-const VIDEO_POSTER = "https://template-congreso-backoffice-mjzlp.ondigitalocean.app/uploads/bannerconbreso2026_452a24031c.pngcd ";
+const VIDEO_POSTER = "https://spmf026-admin.up.railway.app/uploads/bannerconbreso2026_452a24031c.png";
 
 function toHomeGeneral(data: unknown): HomeGeneralInterface | null {
     const section = (data as { data?: { IntroSectionHome?: {
