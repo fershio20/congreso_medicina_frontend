@@ -23,6 +23,8 @@ export { fetchServerSide } from "./utils";
 const PONENCIA_ENDPOINT = "/api/ponencia?populate[page_header][populate]=*&populate[seo][populate]=*";
 const TRABAJO_CIENTIFICO_ENDPOINT = "/api/trabajo-cientifico?populate=*";
 const WAYNAKAY_ENDPOINT = "/api/waynakay?populate[page_header][populate]=*&populate[seo][populate]=*";
+const COSTOS_NACIONALES_ENDPOINT = "/api/costos-nacionales?populate[page_header][populate]=*&populate[seo][populate]=*";
+const COSTOS_INTERNACIONALES_ENDPOINT = "/api/costos-internacionales?populate[page_header][populate]=*&populate[seo][populate]=*";
 
 /**
  * Generic fetch for Strapi single types with page_header, content, seo
@@ -47,6 +49,20 @@ export async function fetchPonenciaData(): Promise<PonenciaPageData | null> {
  */
 export async function fetchWaynakayData(): Promise<PonenciaPageData | null> {
     return fetchConvocatoriaSingleData(WAYNAKAY_ENDPOINT);
+}
+
+/**
+ * Fetches Costos - Nacionales page data from backend
+ */
+export async function fetchCostosNacionalesData(): Promise<PonenciaPageData | null> {
+    return fetchConvocatoriaSingleData(COSTOS_NACIONALES_ENDPOINT);
+}
+
+/**
+ * Fetches Costos - Internacionales page data from backend
+ */
+export async function fetchCostosInternacionalesData(): Promise<PonenciaPageData | null> {
+    return fetchConvocatoriaSingleData(COSTOS_INTERNACIONALES_ENDPOINT);
 }
 
 /**
