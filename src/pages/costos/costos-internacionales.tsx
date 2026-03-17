@@ -31,7 +31,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
   };
 };
 
-export default function CostosInterancionalesPage({
+export default function CostosInternacionalesPage({
   costosInternacionalesData,
   logoUrl,
   configuracion,
@@ -41,7 +41,7 @@ export default function CostosInterancionalesPage({
       pageData={costosInternacionalesData}
       logoUrl={logoUrl}
       configuracion={configuracion}
-      pagePath="/costos/costos-interancionales"
+      pagePath="/costos/costos-internacionales"
       defaultTitle="Costos internacionales"
       defaultDescription="Conoce los costos internacionales del IX Congreso Iberoamericano de Medicina Familiar."
     />
