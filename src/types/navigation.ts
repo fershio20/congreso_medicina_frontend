@@ -13,6 +13,10 @@ export interface NavigationTreeItem {
   external: boolean;
   additionalFields?: {
     featured_item?: boolean;
+    variant?: 'primary' | 'outlined' | string;
+    variante?: 'primary' | 'outlined' | string;
+    color?: string;
+    button_color?: string;
     [key: string]: unknown;
   };
   related?: Record<string, unknown>;

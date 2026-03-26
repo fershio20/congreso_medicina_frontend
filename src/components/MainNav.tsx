@@ -29,6 +29,8 @@ interface NavItem {
     path: string;
     external: boolean;
     featured?: boolean;
+    featuredVariant?: 'primary' | 'outlined';
+    featuredColor?: string;
     items?: NavItem[];
 }
 
@@ -38,12 +40,34 @@ interface MainNavProps {
 
 function treeItemToNavItem(item: NavigationTreeItem, index: number): NavItem {
     const id = item.uiRouterKey || item.slug || item.path?.replace(/^\/#?/, '') || `nav-${index}`;
+    const variantCandidate = [
+        item.additionalFields?.variant,
+        item.additionalFields?.variante,
+        item.additionalFields?.button_variant,
+        item.additionalFields?.featured_variant,
+        item.additionalFields?.style,
+    ].find((value) => typeof value === 'string' && value.trim().length > 0) as string | undefined;
+
+    const rawVariant = (variantCandidate || 'primary').trim().toLowerCase();
+    const featuredVariant: 'primary' | 'outlined' =
+        rawVariant === 'outlined' || rawVariant === 'outline'
+            ? 'outlined'
+            : 'primary';
+
+    const rawColor =
+        item.additionalFields?.button_color ||
+        item.additionalFields?.featured_color ||
+        item.additionalFields?.color;
+    const featuredColor = typeof rawColor === 'string' && rawColor.trim() ? rawColor.trim() : undefined;
+
     return {
         id,
         label: item.title,
         path: item.path || '#',
         external: item.external ?? item.type === 'EXTERNAL',
         featured: Boolean(item.additionalFields?.featured_item),
+        featuredVariant,
+        featuredColor,
         items: item.items?.length ? item.items.map((child, i) => treeItemToNavItem(child, i)) : undefined,
     };
 }
@@ -69,6 +93,25 @@ const MainNav: React.FC<MainNavProps> = ({ configuracion }) => {
     const baseNavTextColor = configuracion?.main_navigation?.dark_mode
         ? '#FFF'
         : (configuracion?.color_main ? configuracion?.color_main : '#333');
+
+    const getFeaturedButtonStyles = (item: NavItem): React.CSSProperties => {
+        const featuredColor = item.featuredColor || baseNavTextColor;
+        const isOutlined = item.featuredVariant === 'outlined';
+
+        if (isOutlined) {
+            return {
+                color: featuredColor,
+                backgroundColor: 'transparent',
+                borderColor: featuredColor,
+            };
+        }
+
+        return {
+            color: '#FFF',
+            backgroundColor: featuredColor,
+            borderColor: featuredColor,
+        };
+    };
 
     // Fallback sections when navigation API is not used
     const fallbackSections: Section[] = useMemo(() => [
@@ -314,7 +357,10 @@ const MainNav: React.FC<MainNavProps> = ({ configuracion }) => {
                     <div className="hidden md:block relative h-full">
                         <div id="menuContainer" className="flex items-stretch h-full">
                             {navItems.map((item) => (
-                                <div key={item.id} className="relative h-full flex items-stretch">
+                                <div
+                                    key={item.id}
+                                    className={`relative h-full flex ${item.featured ? 'items-center' : 'items-stretch'}`}
+                                >
                                     {item.items && item.items.length > 0 ? (
                                         <>
                                             <button
@@ -375,27 +421,21 @@ const MainNav: React.FC<MainNavProps> = ({ configuracion }) => {
                                                 href={item.path}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
-                                                className={`h-full px-6 text-sm font-medium hover:cursor-pointer transition-all duration-300 flex items-center justify-center ${item.featured ? 'h-auto' : 'hover:text-white'}`}
+                                                className={`px-6 text-sm font-medium hover:cursor-pointer transition-all duration-300 flex items-center justify-center border ${item.featured ? 'mx-[5px] h-[50px] rounded-2xl border-[1px]' : 'h-full border-transparent hover:text-white'}`}
                                                 onMouseEnter={() => setHoveredSection(item.id)}
                                                 onMouseLeave={() => setHoveredSection(null)}
-                                                style={{
-                                                    color: item.featured ? '#FFF' : baseNavTextColor,
-                                                    backgroundColor: item.featured ? baseNavTextColor : 'transparent',
-                                                }}
+                                                style={item.featured ? getFeaturedButtonStyles(item) : { color: baseNavTextColor }}
                                             >
                                                 {item.label}
                                             </a>
                                         ) : (
                                             <button
                                                 ref={(el) => { menuRefs.current[item.id] = el; }}
-                                                className={`h-full px-6 text-sm font-medium hover:cursor-pointer transition-all duration-300 flex items-center justify-center ${item.featured ? 'h-auto' : 'hover:text-white'}`}
+                                                className={`px-6 text-sm font-medium hover:cursor-pointer transition-all duration-300 flex items-center justify-center border ${item.featured ? 'mx-[5px] h-[50px] rounded-2xl border-[1px]' : 'h-full border-transparent hover:text-white'}`}
                                                 onMouseEnter={() => setHoveredSection(item.id)}
                                                 onMouseLeave={() => setHoveredSection(null)}
                                                 onClick={() => handleNavClick(item)}
-                                                style={{
-                                                    color: item.featured ? '#FFF' : baseNavTextColor,
-                                                    backgroundColor: item.featured ? baseNavTextColor : 'transparent',
-                                                }}
+                                                style={item.featured ? getFeaturedButtonStyles(item) : { color: baseNavTextColor }}
                                             >
                                                 {item.label}
                                             </button>
