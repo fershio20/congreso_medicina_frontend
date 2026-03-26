@@ -421,7 +421,7 @@ const MainNav: React.FC<MainNavProps> = ({ configuracion }) => {
                                                 href={item.path}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
-                                                className={`px-6 text-sm font-medium hover:cursor-pointer transition-all duration-300 flex items-center justify-center border ${item.featured ? 'mx-[5px] h-[50px] rounded-2xl border-[1px]' : 'h-full border-transparent hover:text-white'}`}
+                                                className={`px-4 text-sm font-medium hover:cursor-pointer transition-all duration-300 flex items-center justify-center border ${item.featured ? 'mx-[5px] h-[50px] rounded-2xl border-[1px]' : 'h-full border-transparent hover:text-white'}`}
                                                 onMouseEnter={() => setHoveredSection(item.id)}
                                                 onMouseLeave={() => setHoveredSection(null)}
                                                 style={item.featured ? getFeaturedButtonStyles(item) : { color: baseNavTextColor }}
@@ -431,7 +431,7 @@ const MainNav: React.FC<MainNavProps> = ({ configuracion }) => {
                                         ) : (
                                             <button
                                                 ref={(el) => { menuRefs.current[item.id] = el; }}
-                                                className={`px-6 text-sm font-medium hover:cursor-pointer transition-all duration-300 flex items-center justify-center border ${item.featured ? 'mx-[5px] h-[50px] rounded-2xl border-[1px]' : 'h-full border-transparent hover:text-white'}`}
+                                                className={`px-4 text-sm font-medium hover:cursor-pointer transition-all duration-300 flex items-center justify-center border ${item.featured ? 'mx-[5px] h-[50px] rounded-2xl border-[1px]' : 'h-full border-transparent hover:text-white'}`}
                                                 onMouseEnter={() => setHoveredSection(item.id)}
                                                 onMouseLeave={() => setHoveredSection(null)}
                                                 onClick={() => handleNavClick(item)}
