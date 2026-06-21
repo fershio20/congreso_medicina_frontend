@@ -129,7 +129,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
       console.error("Comision fetch failed:", res.status, ENDPOINT);
       return {
         props: { comite: [], consejoDirectivoPageData: null, globalSEO: null, logoUrl: null },
-        revalidate: 60 * 10,
+        revalidate: 86400, // 24h - on-demand revalidation via Strapi webhook handles updates
       };
     }
 
@@ -192,13 +192,13 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
         globalSEO: globalSEO || null,
         logoUrl: logoUrl || null
       },
-      revalidate: 60 * 10,
+      revalidate: 86400, // 24h - on-demand revalidation via Strapi webhook handles updates
     };
   } catch (err) {
     console.error("Error fetching comision data:", err);
     return {
       props: { comite: [], consejoDirectivoPageData: null, globalSEO: null, logoUrl: null },
-      revalidate: 60 * 10,
+      revalidate: 86400, // 24h - on-demand revalidation via Strapi webhook handles updates
     };
   }
 };

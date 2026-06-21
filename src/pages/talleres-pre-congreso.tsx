@@ -131,7 +131,7 @@ export const getStaticProps: GetStaticProps<TalleresPageProps> = async () => {
 
     return {
         props: { talleres: mockTalleres },
-        revalidate: 60 * 10, // 10 minutes
+        revalidate: 604800, // 7 days - static mock data, rarely changes
     };
 };
 

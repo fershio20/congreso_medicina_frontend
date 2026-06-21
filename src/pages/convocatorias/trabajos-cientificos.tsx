@@ -31,7 +31,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
             logoUrl: logoUrl ?? null,
             configuracion: configuracion ?? null,
         },
-        revalidate: 60,
+        revalidate: 3600, // 1h - on-demand revalidation via Strapi webhook handles updates
     };
 };
 

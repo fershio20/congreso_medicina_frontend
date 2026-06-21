@@ -1,13 +1,13 @@
 'use client';
 
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import PartnerCard from "@/components/PartnerCard";
 import { URL_DOMAIN } from "@/lib/globalConstants";
 import useSWR from 'swr';
 import { fetcher } from '@/lib/swr';
-import type { APIResponse, Sections, Sponsor } from '@/types/sections';
+import type { APIResponse, Sections } from '@/types/sections';
 
-const PartnersSection: React.FC = () => {
+export default function PartnersSection() {
     // Fetch partners data using SWR
     const { data: apiData } = useSWR<APIResponse>(
         `${URL_DOMAIN}/api/home-page?populate[Auspiciantes][populate][AuspiciantesSection][populate][Auspiciante][populate][auspiciante][populate]=*`,
@@ -67,9 +67,8 @@ const PartnersSection: React.FC = () => {
                         <h3 className="text-xl font-bold mb-6 capitalize">{key.replace(/_/g, " ")}</h3>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center">
                             {items.map((partner, index) => (
-                                <div key={index} className="w-full max-w-[350px] flex justify-center">
+                                <div key={`${partner.logo}-${index}`} className="w-full max-w-[350px] flex justify-center">
                                     <PartnerCard 
-                                        key={index} 
                                         logoSrc={partner.logo} 
                                         altText={partner.alt} 
                                     />
@@ -81,6 +80,4 @@ const PartnersSection: React.FC = () => {
             </div>
         </section>
     );
-};
-
-export default PartnersSection;
+}

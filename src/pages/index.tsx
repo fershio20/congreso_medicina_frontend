@@ -37,13 +37,13 @@ export const getStaticProps: GetStaticProps<HomePageProps> = async () => {
 
         return {
             props: {heroData, globalSEO, logoUrl, configuracion},
-            revalidate: 60, // Cambiado de 600 segundos (10 min) a 60 segundos (1 min)
+            revalidate: 86400, // 24h - on-demand revalidation via Strapi webhook handles updates
         };
     } catch (err) {
         console.error("Error fetching home page data:", err);
         return {
             props: {heroData: null, globalSEO: null, logoUrl: null, configuracion: null},
-            revalidate: 60, // Cambiado de 600 segundos (10 min) a 60 segundos (1 min)
+            revalidate: 86400, // 24h - on-demand revalidation via Strapi webhook handles updates
         };
     }
 };

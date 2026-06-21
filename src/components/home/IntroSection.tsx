@@ -26,7 +26,7 @@ function VideoWithPlayButton({
     const handleEnded = () => setIsPlaying(false);
 
     return (
-        <div className={`relative group cursor-pointer ${className}`} onClick={!isPlaying ? handlePlayClick : undefined}>
+        <div className={`relative group ${className}`}>
             <video
                 ref={videoRef}
                 src={src}
@@ -40,12 +40,13 @@ function VideoWithPlayButton({
                 onPlay={() => setIsPlaying(true)}
                 onPause={handlePause}
                 onEnded={handleEnded}
-                onClick={(e) => isPlaying && e.stopPropagation()}
             />
             {!isPlaying && (
-                <div
-                    className="absolute inset-0 flex items-center justify-center bg-black/20 transition-opacity hover:bg-black/30"
-                    aria-hidden
+                <button
+                    type="button"
+                    className="absolute inset-0 flex items-center justify-center bg-black/20 transition-opacity hover:bg-black/30 cursor-pointer"
+                    onClick={handlePlayClick}
+                    aria-label="Reproducir video"
                 >
                     <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-black/60 flex items-center justify-center shadow-lg hover:bg-black/70 hover:scale-110 transition-transform">
                         <svg
@@ -56,7 +57,7 @@ function VideoWithPlayButton({
                             <path d="M8 5v14l11-7z" />
                         </svg>
                     </div>
-                </div>
+                </button>
             )}
         </div>
     );

@@ -28,7 +28,7 @@ export const getStaticProps: GetStaticProps<ExpertosPageProps> = async () => {
                 experts: experts || [],
                 configuracion: configuracion
             },
-            revalidate: 60, // Revalidate every 60 seconds
+            revalidate: 3600, // 1h - on-demand revalidation via Strapi webhook handles updates
         };
     } catch (err) {
         console.error("Error fetching expertos page data:", err);
@@ -37,7 +37,7 @@ export const getStaticProps: GetStaticProps<ExpertosPageProps> = async () => {
                 experts: [],
                 configuracion: null
             },
-            revalidate: 60,
+            revalidate: 3600, // 1h - on-demand revalidation via Strapi webhook handles updates
         };
     }
 };

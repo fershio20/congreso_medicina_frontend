@@ -135,7 +135,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
             console.error("Comite organizador fetch failed:", res.status, COMISION_LIST_ENDPOINT);
             return {
                 props: { comite: [], comisionPageData: null, globalSEO: null, logoUrl: null, configuracion: configuracion ?? null },
-                revalidate: 60 * 10,
+                revalidate: 86400, // 24h - on-demand revalidation via Strapi webhook handles updates
             };
         }
 
@@ -199,13 +199,13 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
                 logoUrl: logoUrl || null,
                 configuracion: configuracion ?? null
             },
-            revalidate: 60 * 10,
+            revalidate: 86400, // 24h - on-demand revalidation via Strapi webhook handles updates
         };
     } catch (err) {
         console.error("Error fetching comite organizador data:", err);
         return {
             props: { comite: [], comisionPageData: null, globalSEO: null, logoUrl: null, configuracion: null },
-            revalidate: 60 * 10,
+            revalidate: 86400, // 24h - on-demand revalidation via Strapi webhook handles updates
         };
     }
 };

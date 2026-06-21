@@ -63,7 +63,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
       console.error("Fetch failed:", res.status, ENDPOINT);
       return {
         props: { comite: [] },
-        revalidate: 60 * 10, // revalida igual para reintentar más tarde
+        revalidate: 86400, // 24h - on-demand revalidation via Strapi webhook handles updates
       };
     }
 
@@ -72,14 +72,14 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
 
     return {
       props: { comite },
-      // ⏱ Revalidación en background cada 10 minutos
-      revalidate: 60 * 10,
+      // Revalidación en background cada 24h (respaldo del on-demand revalidation)
+      revalidate: 86400,
     };
   } catch (err) {
     console.error("Error fetching comité:", err);
     return {
       props: { comite: [] },
-      revalidate: 60 * 10,
+      revalidate: 86400, // 24h - on-demand revalidation via Strapi webhook handles updates
     };
   }
 };

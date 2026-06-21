@@ -38,7 +38,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
     const configuracion = await fetchConfiguracion();
     return {
         props: { configuracion: configuracion ?? null },
-        revalidate: 60,
+        revalidate: 86400, // 24h - on-demand revalidation via Strapi webhook handles updates
     };
 };
 

@@ -96,7 +96,7 @@ export const getStaticProps: GetStaticProps<TalleresPageProps> = async () => {
             console.error("Talleres fetch failed:", talleresRes.status, TALLERES_ENDPOINT);
             return {
                 props: { talleres: [], talleresPageData: null, globalSEO: null, logoUrl: null },
-                revalidate: 60 * 10,
+                revalidate: 3600, // 1h - on-demand revalidation via Strapi webhook handles updates
             };
         }
 
@@ -159,13 +159,13 @@ export const getStaticProps: GetStaticProps<TalleresPageProps> = async () => {
                 globalSEO: globalSEO || null,
                 logoUrl: logoUrl || null
             },
-            revalidate: 60 * 10,
+            revalidate: 3600, // 1h - on-demand revalidation via Strapi webhook handles updates
         };
     } catch (err) {
         console.error("Error fetching talleres data:", err);
         return {
             props: { talleres: [], talleresPageData: null, globalSEO: null, logoUrl: null },
-            revalidate: 60 * 10,
+            revalidate: 3600, // 1h - on-demand revalidation via Strapi webhook handles updates
         };
     }
 };

@@ -103,7 +103,7 @@ export const getStaticProps: GetStaticProps<ProgramaPageProps> = async () => {
                     globalSEO: null, 
                     logoUrl: null 
                 },
-                revalidate: 60 * 5, // Shorter revalidation time for failed requests
+                revalidate: 600, // 10m - shorter revalidation on failed requests
             };
         }
 
@@ -182,7 +182,7 @@ export const getStaticProps: GetStaticProps<ProgramaPageProps> = async () => {
                 globalSEO: globalSEO || null,
                 logoUrl: logoUrl || null
             },
-            revalidate: 60 * 10,
+            revalidate: 3600, // 1h - on-demand revalidation via Strapi webhook handles updates
         };
     } catch (err) {
         console.error("Error fetching programa data:", err);
@@ -197,7 +197,7 @@ export const getStaticProps: GetStaticProps<ProgramaPageProps> = async () => {
                 globalSEO: null, 
                 logoUrl: null 
             },
-            revalidate: 60 * 5, // Shorter revalidation time for failed requests
+            revalidate: 600, // 10m - shorter revalidation on failed requests
         };
     }
 };

@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Eye, FileText } from "lucide-react";
 import Lightbox from "yet-another-react-lightbox";
@@ -16,12 +16,12 @@ interface TallerCardProps {
     };
 }
 
-const TallerCard: React.FC<TallerCardProps> = ({
+function TallerCard({
     name,
     imageSrc = "/expert-img-default.png",
     onClick,
     documento
-}) => {
+}: TallerCardProps) {
     const [isLightboxOpen, setIsLightboxOpen] = useState(false);
 
     const openLightbox = () => {
@@ -42,7 +42,7 @@ const TallerCard: React.FC<TallerCardProps> = ({
 
     const handleVerDetalles = () => {
         if (documento?.url) {
-            window.open(documento.url, '_blank');
+            window.open(documento.url, "_blank", "noopener,noreferrer");
         }
     };
 
@@ -130,6 +130,6 @@ const TallerCard: React.FC<TallerCardProps> = ({
             />
         </>
     );
-};
+}
 
 export default TallerCard;
