@@ -1,6 +1,7 @@
 import type { AppProps } from 'next/app';
 import { Geist, Geist_Mono, Inter, Rubik, Merriweather, Albert_Sans, Mona_Sans, Hubot_Sans } from "next/font/google";
 import "../styles/globals.css";
+import { SpeedInsights } from "@vercel/speed-insights/next"
 
 // Fonts configuration
 const geistSans = Geist({
