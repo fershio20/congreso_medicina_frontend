@@ -10,7 +10,21 @@ import {
     ConfiguracionData,
     StrapiHomeSection
 } from "@/types/home";
-import { ExpertData, RawExpertData } from "@/types/sections";
+import {
+    ExpertData,
+    RawExpertData,
+    HomeSectionsData,
+    IntroSectionResponse,
+    DisertantesSectionResponse,
+    DisertantesListResponse,
+    CostosSectionResponse,
+    HomeSectionResponse,
+    ThematicSectionResponse,
+    APIResponse,
+    TurismoPageResponse,
+    TurismosResponse,
+} from "@/types/sections";
+import type { NavigationTree } from "@/types/navigation";
 import type {
     PonenciaPageData,
     StrapiPonenciaResponse,
@@ -21,7 +35,7 @@ import type {
 export { fetchServerSide } from "./utils";
 
 const PONENCIA_ENDPOINT = "/api/ponencia?populate[page_header][populate]=*&populate[seo][populate]=*";
-const TRABAJO_CIENTIFICO_ENDPOINT = "/api/trabajo-cientifico?populate=*";
+const TRABAJO_CIENTIFICO_ENDPOINT = "/api/trabajo-cientifico?populate[page_header][populate]=*&populate[seo][populate]=*";
 const WAYNAKAY_ENDPOINT = "/api/waynakay?populate[page_header][populate]=*&populate[seo][populate]=*";
 const COSTOS_NACIONALES_ENDPOINT = "/api/costos-nacionales?populate[page_header][populate]=*&populate[seo][populate]=*";
 const COSTOS_INTERNACIONALES_ENDPOINT = "/api/costos-internacionales?populate[page_header][populate]=*&populate[seo][populate]=*";
@@ -130,7 +144,7 @@ export async function fetchHeroData(): Promise<HomeSectionData | null> {
  */
 export async function fetchGlobalSEO(): Promise<GlobalSEO | null> {
     const json = await fetchServerSide<StrapiSEOResponse>(
-        "/api/seo-setting?populate=*"
+        "/api/seo-setting?populate[default_og_image]=true"
     );
     
     if (!json) return null;
@@ -161,7 +175,7 @@ export async function fetchLogoUrl(): Promise<string | null> {
  */
 export async function fetchConfiguracion(): Promise<ConfiguracionData | null> {
     const json = await fetchServerSide<StrapiConfiguracionResponse>(
-        "/api/configuracion?populate[logo][populate]=*&populate[main_navigation][populate]=*"
+        "/api/configuracion?populate[logo][populate]=*&populate[main_navigation][populate]=*&populate[footer][populate]=*"
     );
     
     if (!json || !json.data) return null;
@@ -179,6 +193,7 @@ export async function fetchConfiguracion(): Promise<ConfiguracionData | null> {
         color_secondary: data.color_secondary,
         color_text: data.color_text,
         color_accent: data.color_accent,
+        footer: data.footer,
         main_navigation:{
             variant: 'default',
             dark_mode: false,
@@ -258,4 +273,103 @@ export async function fetchExperts(): Promise<ExpertData[]> {
     });
     
     return expertsData;
+}
+
+/**
+ * Fetches the navigation tree (Strapi Navigation plugin) server-side so MainNav
+ * can render from props instead of fetching through the proxy on every request.
+ */
+export async function fetchNavigation(): Promise<NavigationTree | null> {
+    return fetchServerSide<NavigationTree>(
+        "/api/navigation/render/navigation?type=TREE&menu=true"
+    );
+}
+
+/** Fetches the turismo (sede/hotels) page single type server-side. */
+export async function fetchTurismoPage(): Promise<TurismoPageResponse | null> {
+    return fetchServerSide<TurismoPageResponse>(
+        "/api/turismo-page?populate[sede_hotel][populate]=*&populate[header][populate]=*&populate[SEO][populate]=*"
+    );
+}
+
+/** Fetches the turismo items (hotels and points of interest) server-side.
+ * Only the fields rendered by the sede page are requested to keep the SSG
+ * page payload small (populate=* embedded full media metadata per item). */
+export async function fetchTurismos(): Promise<TurismosResponse | null> {
+    return fetchServerSide<TurismosResponse>(
+        "/api/turismos?fields[0]=title&fields[1]=is_available&fields[2]=type&fields[3]=telephone&fields[4]=email&fields[5]=distance&fields[6]=map_url_location&populate[featured_image][fields][0]=url"
+    );
+}
+
+/** Fallback used when home section data cannot be fetched. */
+export const EMPTY_HOME_SECTIONS: HomeSectionsData = {
+    intro: null,
+    disertantesSection: null,
+    disertantesList: null,
+    costos: null,
+    programa: null,
+    sede: null,
+    temasLibres: null,
+    partners: null,
+    ejes: null,
+};
+
+/**
+ * Fetches all home page section data server-side (build/ISR) so the home
+ * components render from props instead of firing client-side requests through
+ * the /api/strapi function proxy on every visit. Each query mirrors the exact
+ * shape the matching component already consumed via SWR.
+ */
+export async function fetchHomeSections(): Promise<HomeSectionsData> {
+    const [
+        intro,
+        disertantesSection,
+        disertantesList,
+        costos,
+        programa,
+        sede,
+        temasLibres,
+        partners,
+        ejes,
+    ] = await Promise.all([
+        fetchServerSide<IntroSectionResponse>(
+            "/api/home-page?populate[IntroSectionHome][populate]=*"
+        ),
+        fetchServerSide<DisertantesSectionResponse>(
+            "/api/home-page?populate[DisertantesSection][populate]=*"
+        ),
+        fetchServerSide<DisertantesListResponse>(
+            "/api/Disertantes?populate[avatar][populate]=*&populate[pai][populate]=*"
+        ),
+        fetchServerSide<CostosSectionResponse>(
+            "/api/home-page?populate[CostosSection][populate]=*"
+        ),
+        fetchServerSide<HomeSectionResponse>(
+            "/api/home-page?populate[programa_section][populate]=*"
+        ),
+        fetchServerSide<HomeSectionResponse>(
+            "/api/home-page?populate[sede_congreso_section][populate]=*"
+        ),
+        fetchServerSide<HomeSectionResponse>(
+            "/api/home-page?populate[tema_libre_section][populate]=*"
+        ),
+        fetchServerSide<APIResponse>(
+            "/api/home-page?populate[Auspiciantes][populate][AuspiciantesSection][populate][Auspiciante][populate][auspiciante][populate]=*"
+        ),
+        fetchServerSide<ThematicSectionResponse>(
+            "/api/home-page?populate[EjesTematicosSection][populate][EjesTematicos][populate]=*"
+        ),
+    ]);
+
+    return {
+        intro,
+        disertantesSection,
+        disertantesList,
+        costos,
+        programa,
+        sede,
+        temasLibres,
+        partners,
+        ejes,
+    };
 }

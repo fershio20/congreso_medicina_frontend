@@ -76,7 +76,7 @@ interface ProgramaPageProps {
 
 export const getStaticProps: GetStaticProps<ProgramaPageProps> = async () => {
     const PROGRAMA_ENDPOINT = `${URL_DOMAIN}/api/pagina-de-programa?populate[Agenda][populate]=*`;
-    const SEO_ENDPOINT = `${URL_DOMAIN}/api/seo-setting?populate=*`;
+    const SEO_ENDPOINT = `${URL_DOMAIN}/api/seo-setting?populate[default_og_image]=true`;
     const LOGO_ENDPOINT = `${URL_DOMAIN}/api/home-page?populate[HomeGeneral][populate]=*`;
 
     try {

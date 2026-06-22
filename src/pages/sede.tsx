@@ -4,56 +4,37 @@ import React from "react";
 import DynamicHotelesSection from "@/components/hoteleria/DynamicHotelesSection";
 import Head from "next/head";
 import PageHeader from "@/components/global/PageHeader";
-import { useTurismoPage } from "@/lib/swr";
-import { fetchConfiguracion } from "@/lib/api";
+import { fetchConfiguracion, fetchTurismoPage, fetchTurismos } from "@/lib/api";
 import type { ConfiguracionData } from "@/types/home";
+import type { TurismoPageResponse, TurismosResponse } from "@/types/sections";
 import { GetStaticProps } from "next";
 
 interface Props {
     configuracion: ConfiguracionData | null;
-}
-
-interface TurismoPageData {
-    id: number;
-    show_others_hotels: boolean;
-    show_interest_location: boolean;
-    header: {
-        id: number;
-        title: string;
-        description: string;
-    } | null;
-    sede_hotel: {
-        id: number;
-        title: string;
-        isAvailable: boolean | null;
-        description: string;
-        direccion: string;
-        telefono: string;
-        map_location: string;
-        email: string;
-    };
+    turismoPage: TurismoPageResponse | null;
+    turismos: TurismosResponse | null;
 }
 
 export const getStaticProps: GetStaticProps<Props> = async () => {
-    const configuracion = await fetchConfiguracion();
+    const [configuracion, turismoPage, turismos] = await Promise.all([
+        fetchConfiguracion(),
+        fetchTurismoPage(),
+        fetchTurismos(),
+    ]);
     return {
-        props: { configuracion: configuracion ?? null },
+        props: {
+            configuracion: configuracion ?? null,
+            turismoPage: turismoPage ?? null,
+            turismos: turismos ?? null,
+        },
         revalidate: 86400, // 24h - on-demand revalidation via Strapi webhook handles updates
     };
 };
 
-export default function SedePage({ configuracion }: Props) {
-    // Fetch turismo page data using SWR
-    const { 
-        data: turismoPageResult, 
-        error: turismoPageError, 
-        isLoading: turismoPageLoading 
-    } = useTurismoPage();
+export default function SedePage({ configuracion, turismoPage, turismos }: Props) {
+    const turismoPageData = turismoPage?.data;
 
-    // Extract data from response
-    const turismoPageData: TurismoPageData | undefined = turismoPageResult?.data;
-
-    // Default values for when data is loading or not available
+    // Default values for when data is not available
     const defaultTitle = "Sede del Congreso";
     const defaultDescription = "Información sobre la sede del congreso, hoteles y alojamiento para el Congreso de Pediatría.";
 
@@ -65,42 +46,19 @@ export default function SedePage({ configuracion }: Props) {
             </Head>
             <div className="bg-white text-gray-800 space-y-12">
                 <MainNav configuracion={configuracion} />
-                
-                {turismoPageLoading ? (
-                    <div className="flex justify-center items-center py-20">
-                        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-900"></div>
-                    </div>
-                ) : turismoPageError ? (
-                    <div className="text-center py-20">
-                        <p className="text-red-600 text-lg">Error: {turismoPageError.message}</p>
-                        <button 
-                            onClick={() => window.location.reload()} 
-                            className="mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-                        >
-                            Reintentar
-                        </button>
-                    </div>
-                ) : (
-                    <>
-                        <PageHeader 
-                            title={turismoPageData?.header?.title || defaultTitle}
-                            description={turismoPageData?.header?.description || defaultDescription}
-                        />
 
-                        {/* Main Content */}
-                        <section className="py-16 bg-white">
-                            <div className="container max-w-[1280px] mx-auto px-4">
-                                <DynamicHotelesSection />
-                                
-                                {/* Debug Component - Remove this after fixing the issue */}
-                                {/* <div className="mt-12">
-                                    <DebugTurismoData />
-                                </div> */}
-                            </div>
-                        </section>
-                    </>
-                )}
-                
+                <PageHeader
+                    title={turismoPageData?.header?.title || defaultTitle}
+                    description={turismoPageData?.header?.description || defaultDescription}
+                />
+
+                {/* Main Content */}
+                <section className="py-16 bg-white">
+                    <div className="container max-w-[1280px] mx-auto px-4">
+                        <DynamicHotelesSection turismoPage={turismoPage} turismos={turismos} />
+                    </div>
+                </section>
+
                 <Footer configuracion={configuracion} />
             </div>
         </>

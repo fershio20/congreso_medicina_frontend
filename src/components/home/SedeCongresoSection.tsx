@@ -7,12 +7,16 @@ import { ArrowRight } from "lucide-react";
 import { CustomSectionData } from "@/types/blocks";
 import useSWR from 'swr';
 import { fetcher } from '@/lib/swr';
-import type { HomePageData } from '@/types/sections';
+import type { HomePageData, HomeSectionResponse } from '@/types/sections';
 
-const SedeCongresoSection: React.FC = () => {
-    // Fetch sede congreso section data using SWR
-    const { data: homePageData } = useSWR<{ data: HomePageData }>(
-        `${URL_DOMAIN}/api/home-page?populate[sede_congreso_section][populate]=*`,
+interface SedeCongresoSectionProps {
+    homeData?: HomeSectionResponse | null;
+}
+
+const SedeCongresoSection: React.FC<SedeCongresoSectionProps> = ({ homeData }) => {
+    // Prefer server-side data (SSG); fall back to a client fetch only if absent.
+    const { data: fetched } = useSWR<{ data: HomePageData }>(
+        homeData ? null : `${URL_DOMAIN}/api/home-page?populate[sede_congreso_section][populate]=*`,
         fetcher,
         {
             revalidateOnFocus: false,
@@ -22,6 +26,8 @@ const SedeCongresoSection: React.FC = () => {
             shouldRetryOnError: false, // Don't retry on any error
         }
     );
+
+    const homePageData = homeData ?? fetched;
 
     // Extract sede congreso section data
     const data: CustomSectionData | null = useMemo(() => {

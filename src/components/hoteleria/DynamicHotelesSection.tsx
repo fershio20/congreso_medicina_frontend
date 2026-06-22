@@ -5,69 +5,32 @@ import HotelCard from "./HotelCard";
 import FeaturedHotel from "./FeaturedHotel";
 import { useTurismoPage, useTurismos } from "@/lib/swr";
 import {URL_DOMAIN, URL_DOMAIN_IMG} from "@/lib/globalConstants";
+import type { TurismoItem, TurismoPageResponse, TurismosResponse } from "@/types/sections";
 
-interface TurismoPageData {
-    id: number;
-    show_others_hotels: boolean;
-    show_interest_location: boolean;
-    header: {
-        id: number;
-        title: string;
-        description: string;
-    };
-    sede_hotel: {
-        id: number;
-        title: string;
-        isAvailable: boolean | null;
-        description: string;
-        direccion: string;
-        telefono: string;
-        map_location: string;
-        email: string;
-        featured_image?:{
-            url: string;
-        }
-    };
+interface DynamicHotelesSectionProps {
+    turismoPage?: TurismoPageResponse | null;
+    turismos?: TurismosResponse | null;
 }
 
-interface TurismoItem {
-    id: number;
-    documentId: string;
-    title: string;
-    slug: string;
-    is_available: boolean;
-    type: 'hotel' | 'punto_de_interes';
-    description: string;
-    telephone: string;
-    email: string;
-    distance: string;
-    map_url_location: string;
-    featured_image?: {
-        url: string;
-        formats?: {
-            small?: { url: string };
-            thumbnail?: { url: string };
-        };
-    };
-}
+const DynamicHotelesSection: React.FC<DynamicHotelesSectionProps> = ({ turismoPage, turismos }) => {
+    // Prefer server-side data (SSG); fall back to client fetch only if absent.
+    const {
+        data: turismoPageFetched,
+        error: turismoPageError,
+        isLoading: turismoPageLoading
+    } = useTurismoPage(!!turismoPage);
 
-const DynamicHotelesSection: React.FC = () => {
-    // Fetch turismo page data using SWR
-    const { 
-        data: turismoPageResult, 
-        error: turismoPageError, 
-        isLoading: turismoPageLoading 
-    } = useTurismoPage();
+    const {
+        data: turismoFetched,
+        error: turismoError,
+        isLoading: turismoLoading
+    } = useTurismos(!!turismos);
 
-    // Fetch turismo items using SWR
-    const { 
-        data: turismoResult, 
-        error: turismoError, 
-        isLoading: turismoLoading 
-    } = useTurismos();
+    const turismoPageResult = turismoPage ?? turismoPageFetched;
+    const turismoResult = turismos ?? turismoFetched;
 
     // Extract data from responses
-    const turismoPageData: TurismoPageData | undefined = turismoPageResult?.data;
+    const turismoPageData = turismoPageResult?.data;
     const turismoItems: TurismoItem[] = turismoResult?.data || [];
 
     // Loading state
@@ -78,8 +41,6 @@ const DynamicHotelesSection: React.FC = () => {
             </div>
         );
     }
-
-    console.log('Turismo Page Data:', turismoPageData);
 
     // Error handling
     if (turismoPageError || turismoError) {

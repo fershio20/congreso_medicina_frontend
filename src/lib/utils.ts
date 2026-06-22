@@ -3,6 +3,27 @@ import {twMerge} from "tailwind-merge"
 import {URL_DOMAIN} from "./globalConstants"
 
 /**
+ * Recursively removes `buffer` properties (raw media bytes returned by this
+ * Strapi instance) from a parsed JSON payload. Mutates the value in place.
+ */
+export function stripBuffers(value: unknown): void {
+    if (Array.isArray(value)) {
+        for (const item of value) stripBuffers(item);
+        return;
+    }
+    if (value && typeof value === "object") {
+        const obj = value as Record<string, unknown>;
+        for (const key of Object.keys(obj)) {
+            if (key === "buffer") {
+                delete obj[key];
+            } else {
+                stripBuffers(obj[key]);
+            }
+        }
+    }
+}
+
+/**
  * Generic server-side fetch for Strapi/CMS endpoints
  * @param endpoint - API path (e.g. "/api/ponencia?populate=*")
  * @returns Parsed JSON as T or null on failure
@@ -22,6 +43,10 @@ export async function fetchServerSide<T>(endpoint: string): Promise<T | null> {
         }
 
         const json = await res.json();
+        // This Strapi instance embeds raw image bytes under media `buffer`
+        // fields. They are never used by the app (only `url`/`formats.*.url`)
+        // and would bloat SSG page data by hundreds of KB per image.
+        stripBuffers(json);
         return json as T;
     } catch (error) {
         if (error instanceof Error && !error.message.includes("404")) {

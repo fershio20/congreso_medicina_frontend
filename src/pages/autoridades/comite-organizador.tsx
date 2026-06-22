@@ -92,7 +92,7 @@ interface Props {
 
 /* ===== Helpers ===== */
 const COMISION_LIST = "/api/home-page?populate[ComiteOrganizadorSection][populate][Miembros][populate]=*";
-const COMISION_PAGE_ENDPOINT = "/api/comision-page?populate=*";
+const COMISION_PAGE_ENDPOINT = "/api/comision-page?populate[featured_image]=true&populate[SEO][populate]=*";
 
 /**
  * Normaliza Strapi v4/v5:
@@ -121,7 +121,7 @@ function extractComiteFromStrapi(json: StrapiResponse): Comite[] {
 export const getStaticProps: GetStaticProps<Props> = async () => {
     const COMISION_LIST_ENDPOINT = `${URL_DOMAIN}${COMISION_LIST}`;
     const COMISION_ENDPOINT = `${URL_DOMAIN}${COMISION_PAGE_ENDPOINT}`;
-    const SEO_ENDPOINT = `${URL_DOMAIN}/api/seo-setting?populate=*`;
+    const SEO_ENDPOINT = `${URL_DOMAIN}/api/seo-setting?populate[default_og_image]=true`;
     const LOGO_ENDPOINT = `${URL_DOMAIN}/api/home-page?populate[HomeGeneral][populate]=*`;
 
     try {

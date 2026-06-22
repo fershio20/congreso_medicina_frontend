@@ -7,10 +7,14 @@ import useSWR from 'swr';
 import { fetcher } from '@/lib/swr';
 import type { APIResponse, Sections } from '@/types/sections';
 
-export default function PartnersSection() {
-    // Fetch partners data using SWR
-    const { data: apiData } = useSWR<APIResponse>(
-        `${URL_DOMAIN}/api/home-page?populate[Auspiciantes][populate][AuspiciantesSection][populate][Auspiciante][populate][auspiciante][populate]=*`,
+interface PartnersSectionProps {
+    partnersData?: APIResponse | null;
+}
+
+export default function PartnersSection({ partnersData }: PartnersSectionProps) {
+    // Prefer server-side data (SSG); fall back to a client fetch only if absent.
+    const { data: fetched } = useSWR<APIResponse>(
+        partnersData ? null : `${URL_DOMAIN}/api/home-page?populate[Auspiciantes][populate][AuspiciantesSection][populate][Auspiciante][populate][auspiciante][populate]=*`,
         fetcher,
         {
             revalidateOnFocus: false,
@@ -20,6 +24,8 @@ export default function PartnersSection() {
             shouldRetryOnError: false, // Don't retry on any error
         }
     );
+
+    const apiData = partnersData ?? fetched;
 
     // Transform data
     const { partners, habilitado } = useMemo(() => {

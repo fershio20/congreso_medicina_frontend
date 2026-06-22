@@ -81,9 +81,9 @@ interface TalleresPageProps {
 }
 
 export const getStaticProps: GetStaticProps<TalleresPageProps> = async () => {
-    const TALLERES_ENDPOINT = `${URL_DOMAIN}/api/talleres?populate=*`;
-    const TALLERES_PAGE_ENDPOINT = `${URL_DOMAIN}/api/talleres-page?populate=*`;
-    const SEO_ENDPOINT = `${URL_DOMAIN}/api/seo-setting?populate=*`;
+    const TALLERES_ENDPOINT = `${URL_DOMAIN}/api/talleres?populate[featured_image]=true&populate[documento]=true`;
+    const TALLERES_PAGE_ENDPOINT = `${URL_DOMAIN}/api/talleres-page?populate[featured_image]=true&populate[SEO][populate]=*`;
+    const SEO_ENDPOINT = `${URL_DOMAIN}/api/seo-setting?populate[default_og_image]=true`;
     const LOGO_ENDPOINT = `${URL_DOMAIN}/api/home-page?populate[HomeGeneral][populate]=*`;
 
     try {

@@ -5,6 +5,7 @@ import ThematicCard from "@/components/ThematicCard";
 import { URL_DOMAIN } from "@/lib/globalConstants";
 import { getProxyUrl } from "@/lib/utils";
 import type { ConfiguracionData } from "@/types/home";
+import type { ThematicSectionResponse } from "@/types/sections";
 
 interface EjeTematico {
     color?: string;
@@ -31,13 +32,20 @@ interface ThematicData {
 
 interface ThematicSectionProps {
     configuracion?: ConfiguracionData | null;
+    ejesData?: ThematicSectionResponse | null;
 }
 
-const ThematicSection: React.FC<ThematicSectionProps> = ({ configuracion }) => {
-    const [data, setData] = useState<ThematicData | null>(null);
+const ThematicSection: React.FC<ThematicSectionProps> = ({ configuracion, ejesData }) => {
+    const [data, setData] = useState<ThematicData | null>(() => {
+        const ssg = ejesData?.data;
+        return ssg?.EjesTematicosHabilitados ? ssg : null;
+    });
     const [expandedCardId, setExpandedCardId] = useState<number | null>(null);
 
     useEffect(() => {
+        // Server-side data (SSG) already provided; skip the client fetch.
+        if (ejesData) return;
+
         const url = `${URL_DOMAIN}/api/home-page?populate[EjesTematicosSection][populate][EjesTematicos][populate]=*`;
         const proxyUrl = getProxyUrl(url);
         
@@ -50,7 +58,7 @@ const ThematicSection: React.FC<ThematicSectionProps> = ({ configuracion }) => {
                 }
             })
             .catch(err => console.error('Error loading thematic section:', err));
-    }, []);
+    }, [ejesData]);
 
     if (!data?.EjesTematicosHabilitados) return null;
 

@@ -3,10 +3,6 @@
 import { useEffect, useState } from 'react';
 import {URL_DOMAIN} from "@/lib/globalConstants";
 
-type CostosTableProps = {
-    endpoint?: string; // puedes sobreescribir el endpoint para test
-};
-
 type Categoria = {
     nombre: string;
     tipo?: string;
@@ -20,10 +16,18 @@ type CostosData = {
     categorias: Categoria[];
 };
 
-export default function CostosTable({ endpoint =  `${URL_DOMAIN}/api/home-page?populate[CostosSection][populate]=*` }: CostosTableProps) {
-    const [costos, setCostos] = useState<CostosData | null>(null);
+type CostosTableProps = {
+    tableData?: CostosData | null; // datos provistos por SSG (preferido)
+    endpoint?: string; // fallback: endpoint para fetch en cliente
+};
+
+export default function CostosTable({ tableData, endpoint =  `${URL_DOMAIN}/api/home-page?populate[CostosSection][populate]=*` }: CostosTableProps) {
+    const [costos, setCostos] = useState<CostosData | null>(tableData ?? null);
 
     useEffect(() => {
+        // Si ya tenemos datos por props (SSG), no hacemos fetch en cliente.
+        if (tableData) return;
+
         fetch(endpoint)
             .then(res => res.json())
             .then(data => {
@@ -33,7 +37,7 @@ export default function CostosTable({ endpoint =  `${URL_DOMAIN}/api/home-page?p
                 }
             })
             .catch(err => console.error("Error fetching CostosTable:", err));
-    }, [endpoint]);
+    }, [endpoint, tableData]);
 
     if (!costos) return null;
 

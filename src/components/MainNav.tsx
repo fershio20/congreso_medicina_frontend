@@ -7,7 +7,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {BACKEND_URL, URL_DOMAIN, URL_DOMAIN_IMG} from '@/lib/globalConstants';
 import useSWR from 'swr';
 import { fetcher } from '@/lib/swr';
-import type { HomeGeneralInterface } from '@/types/sections';
 import type { ConfiguracionData } from '@/types/home';
 import type { NavigationTree, NavigationTreeItem } from '@/types/navigation';
 
@@ -36,6 +35,7 @@ interface NavItem {
 
 interface MainNavProps {
     configuracion?: ConfiguracionData | null;
+    navTree?: NavigationTree | null;
 }
 
 function treeItemToNavItem(item: NavigationTreeItem, index: number): NavItem {
@@ -82,7 +82,7 @@ function sectionsToNavItems(sections: Section[]): NavItem[] {
     }));
 }
 
-const MainNav: React.FC<MainNavProps> = ({ configuracion }) => {
+const MainNav: React.FC<MainNavProps> = ({ configuracion, navTree }) => {
     const router = useRouter();
     const pathname = usePathname();
     const [isScrolled, setIsScrolled] = useState(false);
@@ -120,9 +120,10 @@ const MainNav: React.FC<MainNavProps> = ({ configuracion }) => {
         { id: "sede", label: "Sede", isRoute: false, url: "/sede" },
     ], []);
 
-    // Fetch navigation from Strapi Navigation plugin (slug: navigation)
-    const { data: navData } = useSWR<NavigationTree>(
-        NAVIGATION_API,
+    // Prefer server-side navigation (SSG); fall back to a client fetch only if
+    // absent, so we don't run the /api/strapi proxy on every page request.
+    const { data: navFetched } = useSWR<NavigationTree>(
+        navTree ? null : NAVIGATION_API,
         fetcher,
         {
             revalidateOnFocus: false,
@@ -133,7 +134,7 @@ const MainNav: React.FC<MainNavProps> = ({ configuracion }) => {
         }
     );
 
-    // console.log('Navigation Data:', navData);
+    const navData = navTree ?? navFetched;
 
     // Normalized nav items: from API tree or fallback sections
     const navItems: NavItem[] = useMemo(() => {
@@ -143,34 +144,8 @@ const MainNav: React.FC<MainNavProps> = ({ configuracion }) => {
         return sectionsToNavItems(fallbackSections);
     }, [navData, fallbackSections]);
 
-    // Fetch logo using SWR
-    const { data: homePageData, error: homePageError } = useSWR(
-        `${URL_DOMAIN}/api/home-page?populate[HomeGeneral][populate]=*`,
-        fetcher,
-        {
-            revalidateOnFocus: false,
-            revalidateOnReconnect: true,
-            dedupingInterval: 60000,
-            errorRetryCount: 0, // Don't retry - if it fails, show fallback
-            shouldRetryOnError: false, // Don't retry on any error
-            onError: (err) => {
-                // Only log non-404 errors (404s are handled silently by fetcher)
-                if (err instanceof Error && !err.message.includes('404')) {
-                    console.warn('Error loading logo data (non-critical):', err.message);
-                }
-            }
-        }
-    );
-
-    // Extract HomeGeneral from SWR data
-    const HomeGeneral: HomeGeneralInterface | null = useMemo(() => {
-        // Handle null response (404) or missing data gracefully
-        if (!homePageData || !homePageData.data?.HomeGeneral) return null;
-        const section = homePageData.data.HomeGeneral;
-        return {
-            logoCongreso: section.logoCongreso?.url ? URL_DOMAIN + section.logoCongreso.url : ''
-        };
-    }, [homePageData]);
+    // The logo comes from the `configuracion` prop (already passed from
+    // getStaticProps), so no extra client-side fetch is needed here.
 
     // Refs for menu items
     const menuRefs = useRef<{ [key: string]: HTMLButtonElement | null }>({});
@@ -299,12 +274,6 @@ const MainNav: React.FC<MainNavProps> = ({ configuracion }) => {
         }
     };
 
-    if(homePageError) {
-        console.log('Error loading logo data:', homePageError);
-    }
-
-
-
     return (
         <header 
             className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 shadow-lg
@@ -323,7 +292,7 @@ const MainNav: React.FC<MainNavProps> = ({ configuracion }) => {
                         <Link href="/" className="flex items-center">
                             <div className="bg-white rounded-full  transition-all duration-300">
 
-                                {(configuracion?.logo?.url || HomeGeneral?.logoCongreso) ? (
+                                {configuracion?.logo?.url ? (
                                     <img
                                         src={
                                             configuracion?.logo?.url 

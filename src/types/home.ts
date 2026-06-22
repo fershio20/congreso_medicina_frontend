@@ -1,3 +1,6 @@
+import type { HomeSectionsData } from './sections';
+import type { NavigationTree } from './navigation';
+
 // Global SEO interface
 export interface GlobalSEO {
     site_title: string;
@@ -46,6 +49,8 @@ export interface HomePageProps {
     globalSEO: GlobalSEO | null;
     logoUrl: string | null;
     configuracion: ConfiguracionData | null;
+    homeSections: HomeSectionsData;
+    navTree: NavigationTree | null;
 }
 
 export interface StrapiHeroButton {
@@ -113,6 +118,9 @@ export interface ConfiguracionData {
         social_instagram?: string;
         social_twitter?: string;
         social_mail?: string;
+        logo?: {
+            url?: string;
+        };
     }
     main_navigation:{
         dark_mode: boolean;

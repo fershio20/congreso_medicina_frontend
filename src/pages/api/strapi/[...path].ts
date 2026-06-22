@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { URL_DOMAIN } from '@/lib/globalConstants';
+import { stripBuffers } from '@/lib/utils';
 
 /**
  * Generic API proxy route for Strapi backend
@@ -58,11 +59,20 @@ export default async function handler(
 
     // Parse and return the JSON response
     const data = await response.json();
+    // Drop raw media buffers this Strapi instance embeds (never used by the UI).
+    stripBuffers(data);
 
     // Set CORS headers to allow the frontend to access this
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+    // Cache at the CDN edge so repeat requests don't re-run this function.
+    // s-maxage=1h fresh, stale-while-revalidate=24h serves stale while refreshing.
+    res.setHeader(
+      'Cache-Control',
+      'public, s-maxage=3600, stale-while-revalidate=86400'
+    );
 
     return res.status(200).json(data);
   } catch (error) {

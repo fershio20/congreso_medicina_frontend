@@ -19,9 +19,19 @@ export class ApiError extends Error {
  * Converts a backend URL to use the Next.js API proxy route
  * This bypasses CORS issues by routing through the server
  */
+// Paths handled by edge rewrites in next.config.ts. These must NOT be sent
+// through the /api/strapi function proxy, otherwise they run a Vercel Function
+// on every request instead of being proxied at the edge for free.
+const REWRITE_PASSTHROUGH = ['/api/turismo-page', '/api/turismos'];
+
 function getProxyUrl(url: string): string {
     // If it's already a relative URL (starts with /api/strapi), use it as-is
     if (url.startsWith('/api/strapi/')) {
+        return url;
+    }
+
+    // Let rewrite-handled endpoints pass through untouched (edge rewrite)
+    if (REWRITE_PASSTHROUGH.some((p) => url.startsWith(p))) {
         return url;
     }
 
@@ -98,11 +108,13 @@ export const swrConfig: SWRConfiguration = {
     },
 };
 
-// Custom hooks for common API endpoints
-export const useTurismoPage = () => {
-    return useSWR('/api/turismo-page?populate[sede_hotel][populate]=*&populate[header][populate]=*&populate[SEO][populate]=*', fetcher, swrConfig);
+// Custom hooks for common API endpoints.
+// Pass `skip = true` to disable the client fetch when the data was already
+// provided server-side (SSG), avoiding redundant function/proxy calls.
+export const useTurismoPage = (skip = false) => {
+    return useSWR(skip ? null : '/api/turismo-page?populate[sede_hotel][populate]=*&populate[header][populate]=*&populate[SEO][populate]=*', fetcher, swrConfig);
 };
 
-export const useTurismos = () => {
-    return useSWR('/api/turismos?populate=*', fetcher, swrConfig);
+export const useTurismos = (skip = false) => {
+    return useSWR(skip ? null : '/api/turismos?populate=*', fetcher, swrConfig);
 };

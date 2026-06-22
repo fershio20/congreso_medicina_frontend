@@ -5,19 +5,20 @@ import {URL_DOMAIN} from "@/lib/globalConstants";
 import CostosTable from "@/components/elements/CostosTable";
 import useSWR from 'swr';
 import { fetcher } from '@/lib/swr';
-import type { CostosDataInterface } from '@/types/sections';
+import type { CostosDataInterface, CostosSectionResponse } from '@/types/sections';
 import type { ConfiguracionData } from "@/types/home";
 
 interface CostSectionProps {
     configuracion?: ConfiguracionData | null;
+    costosData?: CostosSectionResponse | null;
 }
 
-const CostSection: React.FC<CostSectionProps> = ({ configuracion }) => {
+const CostSection: React.FC<CostSectionProps> = ({ configuracion, costosData }) => {
     const URL_FETCH = `${URL_DOMAIN}/api/home-page?populate[CostosSection][populate]=*`
 
-    // Fetch costos section data using SWR
-    const { data: homePageData } = useSWR(
-        URL_FETCH,
+    // Prefer server-side data (SSG); fall back to a client fetch only if absent.
+    const { data: fetched } = useSWR<CostosSectionResponse>(
+        costosData ? null : URL_FETCH,
         fetcher,
         {
             revalidateOnFocus: false,
@@ -27,6 +28,8 @@ const CostSection: React.FC<CostSectionProps> = ({ configuracion }) => {
             shouldRetryOnError: false, // Don't retry on any error
         }
     );
+
+    const homePageData = costosData ?? fetched;
 
     // Extract costos section data
     const data: CostosDataInterface | null = useMemo(() => {
@@ -134,7 +137,7 @@ const CostSection: React.FC<CostSectionProps> = ({ configuracion }) => {
                 </h2>
 
                 <div className="flex justify-center">
-                    <CostosTable />
+                    <CostosTable tableData={data.table} />
                 </div>
                 <div className={'tableCost'} dangerouslySetInnerHTML={{__html: data.costos }}>
                  

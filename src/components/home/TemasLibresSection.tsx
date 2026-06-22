@@ -7,12 +7,16 @@ import { ArrowRight, Download } from "lucide-react";
 import { CustomSectionData } from "@/types/blocks";
 import useSWR from 'swr';
 import { fetcher } from '@/lib/swr';
-import type { HomePageData } from '@/types/sections';
+import type { HomePageData, HomeSectionResponse } from '@/types/sections';
 
-const TemasLibresSection: React.FC = () => {
-    // Fetch temas libres section data using SWR
-    const { data: homePageData } = useSWR<{ data: HomePageData }>(
-        `${URL_DOMAIN}/api/home-page?populate[tema_libre_section][populate]=*`,
+interface TemasLibresSectionProps {
+    homeData?: HomeSectionResponse | null;
+}
+
+const TemasLibresSection: React.FC<TemasLibresSectionProps> = ({ homeData }) => {
+    // Prefer server-side data (SSG); fall back to a client fetch only if absent.
+    const { data: fetched } = useSWR<{ data: HomePageData }>(
+        homeData ? null : `${URL_DOMAIN}/api/home-page?populate[tema_libre_section][populate]=*`,
         fetcher,
         {
             revalidateOnFocus: false,
@@ -22,6 +26,8 @@ const TemasLibresSection: React.FC = () => {
             shouldRetryOnError: false, // Don't retry on any error
         }
     );
+
+    const homePageData = homeData ?? fetched;
 
     // Extract temas libres section data
     const data: CustomSectionData | null = useMemo(() => {

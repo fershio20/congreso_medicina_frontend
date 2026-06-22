@@ -7,12 +7,17 @@ import { ArrowRight } from "lucide-react";
 import { CustomSectionData } from "@/types/blocks";
 import useSWR from 'swr';
 import { fetcher } from '@/lib/swr';
-import type { HomePageData } from '@/types/sections';
+import type { HomePageData, HomeSectionResponse } from '@/types/sections';
 
-const ProgramaSection: React.FC = () => {
-    // Fetch programa section data using SWR
-    const { data: homePageData, error: homePageError } = useSWR<{ data: HomePageData }>(
-        `${URL_DOMAIN}/api/home-page?populate[programa_section][populate]=*`,
+interface ProgramaSectionProps {
+    homeData?: HomeSectionResponse | null;
+}
+
+const ProgramaSection: React.FC<ProgramaSectionProps> = ({ homeData }) => {
+    // Prefer server-side data (SSG). Only fetch on the client as a fallback
+    // (e.g. if the CMS was unavailable at build/regeneration time).
+    const { data: fetched, error: homePageError } = useSWR<{ data: HomePageData }>(
+        homeData ? null : `${URL_DOMAIN}/api/home-page?populate[programa_section][populate]=*`,
         fetcher,
         {
             revalidateOnFocus: false,
@@ -22,6 +27,8 @@ const ProgramaSection: React.FC = () => {
             shouldRetryOnError: false, // Don't retry on any error
         }
     );
+
+    const homePageData = homeData ?? fetched;
 
     // Extract programa section data
     const data: CustomSectionData | null = useMemo(() => {

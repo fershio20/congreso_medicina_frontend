@@ -9,17 +9,24 @@ import { Carousel } from "@/components/ui/carousel";
 import { Loader2, Users, AlertCircle } from "lucide-react";
 import useSWR from 'swr';
 import { fetcher } from '@/lib/swr';
-import type { RawExpertData, ExpertData, ExpertosSectionInterface } from '@/types/sections';
+import type { RawExpertData, ExpertData, ExpertosSectionInterface, DisertantesSectionResponse, DisertantesListResponse } from '@/types/sections';
 
-const ExpertSection: React.FC = () => {
+interface ExpertSectionProps {
+    disertantesSection?: DisertantesSectionResponse | null;
+    disertantesList?: DisertantesListResponse | null;
+}
+
+const ExpertSection: React.FC<ExpertSectionProps> = ({ disertantesSection, disertantesList }) => {
     const URL_DISERTANTES_SECTION = `${URL_DOMAIN}/api/home-page?populate[DisertantesSection][populate]=*`
     const URL_DISERTANTES_LIST = `${URL_DOMAIN}/api/Disertantes?populate[avatar][populate]=*&populate[pai][populate]=*`
 
-    // Fetch section data using SWR
-    const { data: sectionData, error: sectionError } = useSWR(URL_DISERTANTES_SECTION, fetcher);
+    // Prefer server-side data (SSG); fall back to client fetch only if absent.
+    const { data: sectionFetched, error: sectionError } = useSWR(disertantesSection ? null : URL_DISERTANTES_SECTION, fetcher);
 
-    // Fetch experts list using SWR
-    const { data: expertsData, error: expertsError } = useSWR(URL_DISERTANTES_LIST, fetcher);
+    const { data: expertsFetched, error: expertsError } = useSWR(disertantesList ? null : URL_DISERTANTES_LIST, fetcher);
+
+    const sectionData = disertantesSection ?? sectionFetched;
+    const expertsData = disertantesList ?? expertsFetched;
 
     // Combine data from both SWR calls
     const data: ExpertosSectionInterface = useMemo(() => {

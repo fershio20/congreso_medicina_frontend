@@ -69,6 +69,10 @@ const STRAPI_MODEL_TO_PATHS: Record<string, string[]> = {
   "pagina-de-programa": ["/programa"],
   "comision-page": ["/autoridades/comite-organizador"],
   "consejo-directivo-page": ["/autoridades/comision-directiva"],
+  // Sede / turismo: la página /sede ahora consume estos datos en getStaticProps.
+  "turismo-page": ["/sede"],
+  turismo: ["/sede"],
+  turismos: ["/sede"],
 };
 
 /**

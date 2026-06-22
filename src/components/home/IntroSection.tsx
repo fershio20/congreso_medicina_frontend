@@ -4,6 +4,7 @@ import useSWR from "swr";
 import { URL_DOMAIN, URL_DOMAIN_IMG } from "@/lib/globalConstants";
 import { fetcher } from "@/lib/swr";
 import type { ConfiguracionData } from "@/types/home";
+import type { IntroSectionResponse } from "@/types/sections";
 
 function VideoWithPlayButton({
     src,
@@ -74,6 +75,7 @@ interface HomeGeneralInterface {
 
 interface IntroSectionProps {
     configuracion?: ConfiguracionData | null;
+    introData?: IntroSectionResponse | null;
 }
 
 const INTRO_KEY = `${URL_DOMAIN}/api/home-page?populate[IntroSectionHome][populate]=*`;
@@ -120,13 +122,14 @@ function toHomeGeneral(data: unknown): HomeGeneralInterface | null {
     };
 }
 
-export default function IntroSection({ configuracion }: IntroSectionProps) {
-    // Solo hacer fetch en cliente para que el fetcher use el proxy (/api/strapi/...)
-    const key = typeof window !== 'undefined' ? INTRO_KEY : null;
+export default function IntroSection({ configuracion, introData }: IntroSectionProps) {
+    // Prefer server-side data (SSG). Only fetch on the client as a fallback,
+    // and only in the browser so the fetcher routes via the /api/strapi proxy.
+    const key = introData ? null : (typeof window !== 'undefined' ? INTRO_KEY : null);
 
-    const { data } = useSWR(key, fetcher);
+    const { data: fetched } = useSWR(key, fetcher);
 
-    const HomeGeneral = toHomeGeneral(data);
+    const HomeGeneral = toHomeGeneral(introData ?? fetched);
 
     const isCentrado = HomeGeneral?.layout === 'centrado';
     const layout = HomeGeneral?.layout === 'imagen_izquierda' ? 'order-1' : HomeGeneral?.layout === 'imagen_derecha' ? 'order-2' : '';
