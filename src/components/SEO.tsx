@@ -97,24 +97,6 @@ const SEO: React.FC<SEOProps> = ({
                 <meta name="robots" content={finalNoIndex ? "noindex, nofollow" : "index, follow"}/>
             </Head>
 
-            {/* Google Analytics - Using next/script as recommended by Next.js */}
-            {globalSEO?.google_analytics_id && (
-                <>
-                    <Script
-                        src={`https://www.googletagmanager.com/gtag/js?id=${globalSEO.google_analytics_id}`}
-                        strategy="afterInteractive"
-                    />
-                    <Script id="google-analytics" strategy="afterInteractive">
-                        {`
-              window.dataLayer = window.dataLayer || [];
-              function gtag(){dataLayer.push(arguments);}
-              gtag('js', new Date());
-              gtag('config', '${globalSEO.google_analytics_id}');
-            `}
-                    </Script>
-                </>
-            )}
-
             {/* Google Tag Manager - Using next/script as recommended by Next.js */}
             {globalSEO?.google_tag_manager_id && (
                 <>
@@ -159,7 +141,7 @@ const SEO: React.FC<SEOProps> = ({
             )}
 
             {/* Consent Mode v2 and Helpers */}
-            {(globalSEO?.google_analytics_id || globalSEO?.google_tag_manager_id) && (
+            {globalSEO?.google_tag_manager_id && (
                 <Script id="consent-mode-and-helpers" strategy="afterInteractive">
                     {`
             // Consent Mode v2 - set default state

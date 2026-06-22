@@ -7,5 +7,5 @@ export const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL ?  process.env.NE
 export const ENV_CONST = process.env.NEXT_PUBLIC_ENV || process.env.ENV || '';
 
 // Analytics IDs from environment variables
-export const GTAG_ID = process.env.GTAG_ID || 'G-8P9EPJ3EWD';
+export const GOOGLE_ANALYTICS_ID = process.env.NEXT_PUBLIC_GA_ID || '';
 export const ANALYTICS_ID = process.env.ANALYTICS_ID || 'GTM-584RMZLB';

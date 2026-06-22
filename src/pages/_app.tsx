@@ -1,7 +1,8 @@
 import type { AppProps } from 'next/app';
 import { Geist, Geist_Mono, Inter, Rubik, Merriweather, Albert_Sans, Mona_Sans, Hubot_Sans } from "next/font/google";
 import "../styles/globals.css";
-import { SpeedInsights } from "@vercel/speed-insights/next"
+import { SpeedInsights } from "@vercel/speed-insights/next";
+import GoogleAnalytics from "@/components/GoogleAnalytics";
 
 // Fonts configuration
 const geistSans = Geist({
@@ -58,11 +59,11 @@ export default function MyApp({ Component, pageProps }: AppProps) {
   return (
     <>
       {/* Contenido de la aplicación: font-body aplica Hubot Sans a todo el contenido */}
+      <GoogleAnalytics />
       <div className={`${monaSans.variable} ${hubotSans.variable} ${rubik.variable} ${inter.variable} ${geistSans.variable} ${geistMono.variable} ${merriweather.variable} ${albertSans.variable} font-body antialiased min-h-screen`}>
         <Component {...pageProps} />
       </div>
-
-
+      <SpeedInsights />
     </>
   );
 }
